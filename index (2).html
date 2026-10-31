@@ -1,0 +1,974 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Store</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: white showroom, red signal bands, yellow used only for price and gold-metal accents */
+:root{
+  --paper:#FFFFFF; --tile:#F6F4F4; --line:#E7E2E2; --ink:#1A1414; --muted:#6B6262;
+  --red:#C8102E; --red-deep:#9E0B23; --yellow:#F5B800; --yellow-soft:#FFF4CC; --ok:#1E7A46;
+  --display:"Big Shoulders Display", Impact, "Arial Narrow", sans-serif;
+  --body:"Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+  --gut:max(16px, env(safe-area-inset-left, 0px));
+  --gutR:max(16px, env(safe-area-inset-right, 0px));
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--paper)}
+a{color:inherit}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding-left:var(--gut);padding-right:var(--gutR)}
+h1,h2,h3{font-family:var(--display);text-transform:uppercase;line-height:.95;margin:0;text-wrap:balance;letter-spacing:.005em}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* announcement */
+.announce{background:var(--ink);color:#fff;font-size:12.5px;letter-spacing:.04em}
+.announce .wrap{display:flex;gap:24px;justify-content:center;padding-block:8px;flex-wrap:wrap;text-align:center}
+.announce b{color:var(--yellow)}
+.announce{overflow:hidden;white-space:nowrap}
+.announce .t{display:inline-flex;padding:7px 0;animation:marq 40s linear infinite}
+.announce span{padding-right:26px}
+.announce .dot{color:var(--yellow)}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:24px;padding-block:12px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo span{font-family:var(--display);font-weight:900;font-size:30px;letter-spacing:.02em;text-transform:uppercase}
+.logo span i{font-style:normal;color:var(--red)}
+nav.main{display:flex;gap:22px;margin-left:12px}
+nav.main a{text-decoration:none;font-weight:600;font-size:14px;color:var(--muted)}
+nav.main a:hover{color:var(--ink)}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.rate-chip{display:flex;align-items:center;gap:6px;font-size:12px;border:1px solid var(--line);border-radius:999px;padding:5px 10px;color:var(--muted)}
+.rate-chip .dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);box-shadow:0 0 0 3px var(--yellow-soft)}
+.cart-btn{display:flex;align-items:center;gap:8px;background:var(--ink);color:#fff;border:0;border-radius:999px;padding:9px 16px;font-weight:600}
+.cart-btn .count{background:var(--red);border-radius:999px;min-width:22px;height:22px;display:grid;place-items:center;font-size:12px;padding:0 6px}
+@media (max-width:820px){nav.main{display:none}.rate-chip{display:none}}
+
+/* hero */
+.hero{border-bottom:1px solid var(--line);overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;padding-block:56px 48px}
+.hero h1{font-size:clamp(56px,9vw,124px);font-weight:900}
+.hero h1 em{font-style:normal;color:var(--red)}
+.hero p.lede{max-width:46ch;font-size:17px;color:var(--muted);margin:20px 0 28px}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:4px;padding:14px 22px;font-weight:700;font-size:14px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;border:2px solid var(--ink);background:var(--ink);color:#fff}
+.btn.red{background:var(--red);border-color:var(--red)}
+.btn.red:hover{background:var(--red-deep);border-color:var(--red-deep)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:#fff}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.hero-stage{position:relative;aspect-ratio:1/1;max-width:100%}
+.hero-stage .disc{position:absolute;inset:6%;border-radius:50%;background:var(--red)}
+.hero-stage .ring{position:absolute;inset:0;border-radius:50%;border:2px dashed var(--yellow)}
+.hero-stage svg{position:absolute;inset:4%;width:92%;height:92%}
+.hero-tag{position:absolute;right:2%;bottom:8%;background:#fff;border:1px solid var(--line);border-radius:6px;padding:10px 14px;box-shadow:0 10px 30px rgba(26,20,20,.12)}
+.hero-tag small{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.1em}
+.hero-tag b{font-family:var(--display);font-size:22px;text-transform:uppercase}
+.hero-tag .p{font-family:var(--mono);color:var(--red);font-weight:600}
+.hero-tag[data-open]{cursor:pointer}
+.hero-stage.photo .disc,.hero-stage.photo .ring{display:none}
+.hero-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:14px;background:var(--tile)}
+.logo-img{height:40px;width:auto;max-width:200px;object-fit:contain;display:block}
+footer .logo-img.on-white{background:#fff;padding:6px 10px;border-radius:6px;box-sizing:content-box}
+@media (max-width:860px){.hero .wrap{grid-template-columns:1fr;padding-block:36px}.hero-stage{max-width:440px;width:100%;margin:0 auto}}
+
+/* trust strip */
+.trust{border-bottom:1px solid var(--line)}
+.trust .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.trust div{padding:20px 18px;border-left:1px solid var(--line);display:flex;gap:12px;align-items:flex-start}
+.trust div:first-child{border-left:0;padding-left:0}
+.trust svg{flex:none;color:var(--red)}
+.trust b{display:block;font-size:14px}
+.trust span{font-size:13px;color:var(--muted)}
+@media (max-width:860px){.trust .wrap{grid-template-columns:1fr 1fr}.trust div{border-left:0;padding-left:0;border-top:1px solid var(--line)}.trust div:nth-child(-n+2){border-top:0}}
+@media (max-width:460px){.trust .wrap{grid-template-columns:1fr}.trust div:nth-child(2){border-top:1px solid var(--line)}}
+
+section{padding-block:64px}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:28px}
+.sec-head h2{font-size:clamp(40px,5.4vw,64px);font-weight:900}
+
+/* categories */
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.cat{position:relative;background:var(--tile);border-radius:6px;overflow:hidden;border:0;text-align:left;padding:0;aspect-ratio:4/3.4}
+.cat svg{position:absolute;inset:0;width:100%;height:100%;transition:transform .4s}
+.cat:hover svg{transform:scale(1.05)}
+.cat .pimg{position:absolute;inset:0}
+.cat .lbl{position:absolute;left:14px;bottom:12px;right:14px;display:flex;justify-content:space-between;align-items:baseline}
+.cat .lbl b{font-family:var(--display);font-size:26px;text-transform:uppercase}
+.cat .lbl span{font-size:12px;color:var(--muted)}
+@media (max-width:860px){.cats{grid-template-columns:1fr 1fr}}
+
+/* shop */
+.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:24px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;min-width:0;flex:1}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+select{font:inherit;border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:#fff;color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:28px 18px}
+@media (max-width:1020px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:720px){.grid{grid-template-columns:1fr 1fr;gap:22px 12px}}
+.card{display:flex;flex-direction:column;gap:10px;min-width:0}
+.card .img{position:relative;background:var(--tile);border-radius:6px;aspect-ratio:1/1;overflow:hidden;border:0;padding:0;width:100%}
+.card .img svg{width:100%;height:100%;display:block;transition:transform .35s}
+.card:hover .img svg{transform:scale(1.04)}
+.badge{position:absolute;top:10px;left:10px;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 8px;border-radius:3px;background:var(--ink);color:#fff}
+.badge.new{background:var(--red)}
+.badge.limited{background:var(--yellow);color:var(--ink)}
+.quick{position:absolute;left:10px;right:10px;bottom:10px;background:#fff;border:1px solid var(--line);border-radius:4px;padding:9px;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:0;transform:translateY(6px);transition:.2s}
+.card:hover .quick,.card:focus-within .quick{opacity:1;transform:none}
+@media (hover:none){.quick{display:none}}
+.card .meta{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.card h3{font-family:var(--body);text-transform:none;font-size:14.5px;font-weight:600;line-height:1.3;letter-spacing:0}
+.card .cat-s{font-size:12px;color:var(--muted)}
+.price{font-family:var(--mono);font-weight:600;font-size:14px;white-space:nowrap}
+.price small{display:block;color:var(--muted);font-weight:400;font-size:11px;text-align:right}
+.swatches{display:flex;gap:6px}
+.sw{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.18)}
+.empty{grid-column:1/-1;padding:40px;text-align:center;color:var(--muted)}
+
+/* collection band */
+.band{background:var(--red);color:#fff;overflow:hidden}
+.band .wrap{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;padding-block:64px}
+.band h2{font-size:clamp(52px,8vw,108px);font-weight:900}
+.band h2 span{color:var(--yellow)}
+.band p{max-width:44ch;font-size:16px;opacity:.92;margin:18px 0 26px}
+.band .btn{background:#fff;color:var(--red);border-color:#fff}
+.band .btn:hover{background:var(--yellow);border-color:var(--yellow);color:var(--ink)}
+.band-art{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.band-art button{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:6px;aspect-ratio:1/1;padding:0;overflow:hidden}
+.band-art svg{width:100%;height:100%}
+@media (max-width:860px){.band .wrap{grid-template-columns:1fr}}
+
+/* how it works */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;counter-reset:s}
+.step{border:1px solid var(--line);border-radius:6px;padding:24px;position:relative}
+.step .n{font-family:var(--display);font-size:56px;font-weight:900;color:var(--yellow);line-height:1;-webkit-text-stroke:1.5px var(--ink)}
+.step h3{font-size:26px;margin:10px 0 8px}
+.step p{margin:0;color:var(--muted);font-size:14px}
+@media (max-width:860px){.steps{grid-template-columns:1fr}}
+
+/* delivery */
+.del{display:grid;grid-template-columns:1fr 1.3fr;gap:40px;align-items:start}
+.del p{color:var(--muted);max-width:52ch}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:6px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:13px 16px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);background:var(--tile)}
+tr:last-child td{border-bottom:0}
+td.mono{white-space:nowrap}
+@media (max-width:860px){.del{grid-template-columns:1fr}}
+
+/* faq */
+.faq{max-width:820px}
+details{border-bottom:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;padding:20px 0;font-weight:600;font-size:16px;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--mono);color:var(--red);font-size:20px;line-height:1}
+details[open] summary::after{content:"–"}
+details p{margin:0 0 20px;color:var(--muted);max-width:68ch}
+
+footer{background:var(--ink);color:#d9d2d2;font-size:13.5px}
+footer .wrap{padding-block:48px 28px;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:28px}
+footer h4{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#fff;margin:0 0 12px}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+footer a{text-decoration:none}footer a:hover{color:var(--yellow)}
+footer .logo span{color:#fff}
+.fine{grid-column:1/-1;border-top:1px solid #3a3030;padding-top:18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#9a9090;font-size:12px}
+@media (max-width:860px){footer .wrap{grid-template-columns:1fr 1fr}}
+
+/* overlays */
+.scrim{position:fixed;inset:0;background:rgba(26,20,20,.5);z-index:80}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:#fff;z-index:90;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px);box-shadow:-20px 0 50px rgba(0,0,0,.15)}
+.dr-head{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line)}
+.dr-head h3{font-size:28px}
+.x{border:0;background:var(--tile);width:36px;height:36px;border-radius:50%;font-size:18px;line-height:1}
+.dr-body{flex:1;overflow-y:auto;padding:8px 20px}
+.dr-foot{border-top:1px solid var(--line);padding:16px 20px;display:grid;gap:10px}
+.line-item{display:grid;grid-template-columns:72px 1fr auto;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);align-items:start}
+.line-item .th{background:var(--tile);border-radius:4px;aspect-ratio:1/1}
+.line-item .th svg{width:100%;height:100%}
+.line-item b{font-size:14px;display:block;line-height:1.3}
+.line-item small{color:var(--muted);font-size:12px}
+.qty{display:inline-flex;border:1px solid var(--line);border-radius:4px;margin-top:8px}
+.qty button{border:0;background:none;width:28px;height:28px}
+.qty span{min-width:24px;display:grid;place-items:center;font-family:var(--mono);font-size:13px}
+.rm{border:0;background:none;color:var(--muted);font-size:12px;text-decoration:underline;padding:0;margin-top:6px;display:block}
+.totrow{display:flex;justify-content:space-between;font-size:14px}
+.totrow.big{font-weight:700;font-size:16px}
+.totrow .btc{color:var(--muted);font-size:12px}
+.prog{font-size:12.5px;color:var(--muted)}
+.prog .bar{height:4px;background:var(--tile);border-radius:2px;margin-top:6px;overflow:hidden}
+.prog .bar i{display:block;height:100%;background:var(--yellow)}
+
+.modal{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) var(--gutR) max(16px,env(safe-area-inset-bottom,0px)) var(--gut);overflow-y:auto}
+.modal .panel{background:#fff;border-radius:8px;width:min(980px,100%);position:relative;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;max-height:calc(100vh - 32px);overflow-y:auto}
+.modal .panel .x{position:absolute;top:12px;right:12px;z-index:2}
+.pd-img{background:var(--tile);aspect-ratio:1/1}
+.pd-img svg{width:100%;height:100%}
+.pd{padding:32px 28px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.pd h2{font-size:clamp(34px,4vw,48px)}
+.pd .desc{color:var(--muted);margin:0}
+.opt-l{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between}
+.opt-l span{font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted)}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{border:1px solid var(--line);background:#fff;border-radius:4px;padding:8px 12px;font-size:13px;font-weight:600;min-width:46px}
+.opt[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.copt{width:34px;height:34px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);padding:0}
+.copt[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink)}
+.specs{margin:0;padding:0;list-style:none;font-size:13px;color:var(--muted);display:grid;gap:4px;border-top:1px solid var(--line);padding-top:14px}
+.specs li::before{content:"— ";color:var(--red)}
+.pd .bigprice{font-family:var(--mono);font-size:24px;font-weight:600}
+.pd .bigprice small{font-size:13px;color:var(--muted);font-weight:400;margin-left:8px}
+@media (max-width:760px){.modal{place-items:start center}.modal .panel{grid-template-columns:1fr;max-height:none}.pd{padding:22px 18px}}
+
+/* checkout */
+.co .panel{grid-template-columns:1.1fr .9fr}
+.co-main{padding:30px 28px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.co-side{background:var(--tile);padding:30px 24px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.stepper{display:flex;gap:8px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.stepper span.on{color:var(--red)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fgrid .full{grid-column:1/-1}
+label.f{display:grid;gap:5px;font-size:12.5px;font-weight:600;min-width:0}
+label.f input,label.f select{font:inherit;font-weight:400;border:1px solid var(--line);border-radius:4px;padding:11px 12px;width:100%;background:#fff;color:var(--ink)}
+label.f input:invalid:not(:placeholder-shown){border-color:var(--red)}
+.ship-opts{display:grid;gap:8px}
+.ship-opt{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:6px;padding:12px 14px;cursor:pointer}
+.ship-opt:has(input:checked){border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.ship-opt div{flex:1}.ship-opt small{display:block;color:var(--muted);font-size:12px}
+.paybox{border:2px solid var(--ink);border-radius:8px;padding:18px;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
+#qr{width:156px;height:156px;background:#fff;padding:6px;border:1px solid var(--line);border-radius:4px}
+#qr img,#qr canvas{width:100%!important;height:100%!important}
+.amt{font-family:var(--mono);font-size:22px;font-weight:600;word-break:break-all}
+.amt small{font-size:12px;color:var(--muted);font-weight:400;display:block}
+.addr{font-family:var(--mono);font-size:12.5px;background:var(--tile);border:1px solid var(--line);border-radius:4px;padding:10px;word-break:break-all;user-select:all}
+.copy{border:1px solid var(--ink);background:#fff;border-radius:4px;padding:7px 10px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.note{font-size:12.5px;color:var(--muted);background:var(--yellow-soft);border-left:3px solid var(--yellow);padding:10px 12px;border-radius:0 4px 4px 0}
+.mini{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;font-size:13px}
+.mini .th{background:#fff;border-radius:4px;aspect-ratio:1/1}
+.mini .th svg{width:100%;height:100%}
+.done{text-align:center;display:grid;gap:12px;justify-items:center;padding:20px 0}
+.done .ref{font-family:var(--mono);font-size:22px;font-weight:600;background:var(--tile);padding:8px 14px;border-radius:4px}
+@media (max-width:760px){.co .panel{grid-template-columns:1fr}.co-side{order:-1}.paybox{grid-template-columns:1fr;justify-items:center;text-align:center}.fgrid{grid-template-columns:1fr}}
+
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:6px;font-size:14px;z-index:120;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+
+/* ===== Leather Week promo ===== */
+.promo{position:relative;overflow:hidden;color:#fff;isolation:isolate;background:linear-gradient(120deg,#FF2E63,#FF8A00,#FFC233,#00B89F,#5B4BFF,#D61CE0,#FF2E63);background-size:400% 400%;animation:hue 14s ease infinite}
+@keyframes hue{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.promo::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 18% 28%,rgba(255,255,255,.22),transparent 40%),linear-gradient(90deg,rgba(0,0,0,.28),rgba(0,0,0,0) 60%);z-index:-1}
+.promo .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:32px;align-items:center;padding-block:40px}
+.blob{position:absolute;border-radius:50%;opacity:.5;z-index:-1;animation:float 9s ease-in-out infinite}
+.blob.b1{width:200px;height:200px;background:#FFC233;top:-60px;left:40%}
+.blob.b2{width:130px;height:130px;background:#5B4BFF;bottom:-40px;left:6%;animation-delay:-3s}
+.blob.b3{width:90px;height:90px;background:#FF2E63;top:34%;right:3%;animation-delay:-6s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(22px,-26px) scale(1.15)}}
+.spark{position:absolute;z-index:-1;animation:twinkle 2.6s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.15;transform:scale(.6) rotate(0)}50%{opacity:1;transform:scale(1.15) rotate(45deg)}}
+.promo .pill{display:inline-flex;gap:8px;align-items:center;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.promo .pill i{width:8px;height:8px;border-radius:50%;background:#fff;animation:pulse 1.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.8)}100%{box-shadow:0 0 0 10px rgba(255,255,255,0)}}
+.promo h2{font-size:clamp(50px,8.6vw,116px);font-weight:900;margin:14px 0 8px;text-shadow:0 4px 0 rgba(0,0,0,.2)}
+.promo h2 .off{display:inline-block;background:#fff;color:#E3164F;padding:.02em .14em;border-radius:8px;text-shadow:none;animation:wobble 2.6s ease-in-out infinite}
+@keyframes wobble{0%,100%{transform:rotate(-3deg) scale(1)}50%{transform:rotate(2deg) scale(1.06)}}
+.promo p.sub{font-size:16px;max-width:44ch;margin:0 0 18px;font-weight:500;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+.cd{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.cd div{background:rgba(0,0,0,.34);border:1px solid rgba(255,255,255,.3);border-radius:8px;min-width:64px;padding:8px 6px;text-align:center}
+.cd b{display:block;font-family:var(--mono);font-size:24px;line-height:1.15}
+.cd small{font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.9}
+.promo .btn{background:#fff;color:var(--ink);border-color:#fff}
+.promo .btn:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.promo .btn.ghost{background:transparent;color:#fff;border-color:#fff}
+.reel{height:360px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;gap:12px;-webkit-mask-image:linear-gradient(transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(transparent,#000 14%,#000 86%,transparent)}
+.reel .col{display:grid;gap:12px;animation:up 28s linear infinite}
+.reel .col.rev{animation-direction:reverse}
+@keyframes up{to{transform:translateY(calc(-50% - 6px))}}
+.reel button{position:relative;background:#fff;border:0;border-radius:12px;padding:0;aspect-ratio:1/1;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.2)}
+.reel img{width:100%;height:100%;object-fit:contain;display:block}
+.reel .pct{position:absolute;top:8px;left:8px;background:#E3164F;color:#fff;font-size:11px;font-weight:800;padding:3px 7px;border-radius:4px}
+.reel .pr{position:absolute;bottom:8px;right:8px;background:var(--ink);color:#fff;font-family:var(--mono);font-size:12px;padding:3px 7px;border-radius:4px}
+@media (max-width:860px){.promo .wrap{grid-template-columns:1fr;padding-block:32px}.reel{height:230px}}
+.ticker{background:var(--ink);color:#fff;overflow:hidden;white-space:nowrap;font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:.06em;text-transform:uppercase}
+.ticker .t{display:inline-flex;padding:10px 0;animation:marq 32s linear infinite}
+.ticker span{padding-right:32px}
+.ticker em{font-style:normal;color:#FFC233}
+.ticker b{color:#FF4F7E}
+@keyframes marq{to{transform:translateX(-50%)}}
+/* sale bits on cards */
+.pimg{width:100%;height:100%;object-fit:contain;display:block;background:#fff;transition:transform .35s}
+.card:hover .img .pimg{transform:scale(1.04)}
+.badge.sale{background:#E3164F}
+.off-tag{position:absolute;top:10px;right:10px;background:#FFC233;color:var(--ink);font-weight:800;font-size:12px;padding:4px 8px;border-radius:999px}
+.price s{color:var(--muted);font-weight:400}
+.price.on-sale{color:#E3164F}
+.save-row{color:#C2185B;font-weight:600}
+.code-tag{position:absolute;left:10px;bottom:10px;background:#1565C0;color:#fff;font-family:var(--mono);font-weight:700;font-size:14px;padding:4px 9px;border-radius:4px;z-index:2}
+.paytabs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.paytab{border:1px solid var(--line);background:#fff;border-radius:6px;padding:12px;font-weight:700;font-size:14px;display:flex;gap:8px;align-items:center;justify-content:center}
+.paytab[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.gc-row{display:grid;grid-template-columns:1.2fr .7fr 1.6fr auto;gap:8px;align-items:end;border:1px solid var(--line);border-radius:6px;padding:10px}
+.gc-row .rm{margin:0 0 12px}
+.gc-tot{display:flex;justify-content:space-between;font-size:14px;font-weight:600}
+.gc-tot .mono.ok{color:var(--ok)}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted)}
+.chk input{margin-top:3px;width:18px;height:18px;flex:none}
+.sendrow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+@media (max-width:760px){.gc-row{grid-template-columns:1fr 1fr}.gc-row .code{grid-column:1/-1}}
+.pimg.missing{display:grid;place-items:center;text-align:center;padding:8px;color:var(--muted);font-size:12px;background:var(--tile);border:1px dashed var(--line);border-radius:6px}
+@media (max-width:720px){.card .meta{flex-direction:column;gap:4px}.price small{text-align:left}}
+.off-inline{display:inline-block;background:#FFC233;color:var(--ink);font-family:var(--body);font-size:13px;font-weight:800;padding:3px 8px;border-radius:999px;vertical-align:middle;margin-left:6px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="announce" role="marquee"><div class="t" id="ann"></div></div>
+
+<header class="top"><div class="wrap">
+  <a class="logo" href="#top" aria-label="Store home"><svg width="40" height="26" viewBox="-50 -16 100 32" aria-hidden="true"><g id="logoMark"></g></svg><span>Sto<i>re</i></span></a>
+  <nav class="main"><a href="#sale" style="color:#E3164F">Sale</a><a href="#shop">Shop</a><a href="#redline">Redline</a><a href="#pay">Pay with BTC</a><a href="#delivery">Delivery</a><a href="#faq">FAQ</a></nav>
+  <div class="hdr-right">
+    <div class="rate-chip"><span class="dot"></span><span>1 BTC ≈ <span class="mono" id="rateTop"></span></span></div>
+    <button class="cart-btn" id="openCart" aria-label="Open cart"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>Cart<span class="count" id="cartCount">0</span></button>
+  </div>
+</div></header>
+
+<main id="top">
+<section class="promo" id="sale" style="padding:0" aria-label="Leather Week sale">
+  <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><svg class="spark" style="top:12%;left:4%" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6Z" fill="#fff"/></svg><svg class="spark" style="top:70%;left:46%;animation-delay:-1s" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6Z" fill="#fff"/></svg><svg class="spark" style="top:18%;left:58%;animation-delay:-1.8s" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6Z" fill="#fff"/></svg><svg class="spark" style="bottom:12%;right:40%;animation-delay:-.6s" width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6Z" fill="#fff"/></svg>
+  <div class="wrap">
+    <div>
+      
+      <h2>Up to <span class="off">30% off</span><br>new leather</h2>
+      <p class="sub">Biker jackets, racers, varsity, gloves, boots and more. Sale prices are already applied, so the discount comes off before you pay in BTC.</p>
+      <div class="cd" id="cd"><div><b id="cdD">00</b><small>Days</small></div><div><b id="cdH">00</b><small>Hours</small></div><div><b id="cdM">00</b><small>Mins</small></div><div><b id="cdS">00</b><small>Secs</small></div></div>
+      <div class="cta-row"><button class="btn" data-filter="Sale">Shop the sale</button><button class="btn ghost" data-filter="Jackets">All jackets</button></div>
+    </div>
+    <div class="reel" id="reel"></div>
+  </div>
+</section>
+
+<section class="hero" style="padding:0"><div class="wrap">
+  <div>
+    <div class="eyebrow">Fall / Winter 2026 · Iron Road Collection</div>
+    <h1 style="margin-top:14px">Built for the <em>long road.</em></h1>
+    <p class="lede">Heavyweight riding apparel, solid-metal jewelry and road-ready accessories. Priced in dollars, paid in Bitcoin, shipped express to your door.</p>
+    <div class="cta-row"><a class="btn red" href="#shop">Shop the collection</a><a class="btn ghost" href="#pay">How BTC checkout works</a></div>
+  </div>
+  <div class="hero-stage"><div class="ring"></div><div class="disc"></div><svg viewBox="0 0 300 300" id="heroArt" aria-hidden="true"></svg>
+    <div class="hero-tag" id="heroTag"></div>
+  </div>
+</div></section>
+
+<div class="trust"><div class="wrap">
+  <div><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg><p style="margin:0"><b>Express worldwide</b><span>DHL Express, tracked door to door</span></p></div>
+  <div><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.5 8h4a2 2 0 0 1 0 4h-4m0 0h4.5a2 2 0 0 1 0 4H9.5V8m1.5-2v2m2-2v2m-2 8v2m2-2v2"/></svg><p style="margin:0"><b>Pay in Bitcoin</b><span>On-chain BTC, QR at checkout</span></p></div>
+  <div><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v4h4"/></svg><p style="margin:0"><b>30-day returns</b><span>Unworn items, original packaging</span></p></div>
+  <div><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg><p style="margin:0"><b>Premium packaging</b><span>Boxed, sealed and insured</span></p></div>
+</div></div>
+
+<section id="categories"><div class="wrap">
+  <div class="sec-head"><div><div class="eyebrow">Browse</div><h2>Shop by category</h2></div></div>
+  <div class="cats" id="cats"></div>
+</div></section>
+
+<section id="shop" style="padding-top:0"><div class="wrap">
+  <div class="sec-head"><div><div class="eyebrow">The catalog</div><h2>All products</h2></div><span class="prog" id="resultCount"></span></div>
+  <div class="toolbar">
+    <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
+    <label for="sort" class="prog">Sort</label>
+    <select id="sort"><option value="feat">Featured</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="new">Newest</option><option value="disc">Biggest discount</option></select>
+  </div>
+  <div class="grid" id="grid"></div>
+</div></section>
+
+<div class="band" id="redline"><div class="wrap">
+  <div>
+    <div class="eyebrow" style="color:var(--yellow)">Limited capsule</div>
+    <h2 style="margin-top:12px">The <span>Redline</span> capsule</h2>
+    <p>Signal-red outerwear, high-tops and enamel jewelry cut for riders who want to be seen at 100 meters. Small batch, numbered run, no restocks.</p>
+    <button class="btn" data-filter="Redline">Shop Redline</button>
+  </div>
+  <div class="band-art" id="bandArt"></div>
+</div></div>
+
+<section id="pay"><div class="wrap">
+  <div class="sec-head"><div><div class="eyebrow">Checkout</div><h2>Paying with Bitcoin</h2></div><p class="prog" style="max-width:40ch;margin:0">Every price is set in US dollars. At checkout your total is converted to BTC at the posted rate.</p></div>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>Build your order</h3><p>Add items, pick sizes and choose Express or Priority delivery. Your total shows in USD with the BTC equivalent beside it.</p></div>
+    <div class="step"><div class="n">2</div><h3>Send the exact BTC</h3><p>Scan the QR code or copy our address into your wallet. The QR code already carries the exact amount for your order.</p></div>
+    <div class="step"><div class="n">3</div><h3>We confirm and ship</h3><p>Paste your transaction ID. Once the payment has 2 network confirmations, your order is packed and a tracking number is emailed to you.</p></div>
+  </div>
+</div></section>
+
+<section id="delivery" style="background:var(--tile)"><div class="wrap del">
+  <div>
+    <div class="eyebrow">Premium delivery</div>
+    <h2 style="font-size:clamp(40px,5.4vw,64px);margin:12px 0 16px">Delivered fast, insured, tracked</h2>
+    <p>Orders packed within 1 business day of payment confirmation. Every parcel ships in a rigid branded box, sealed and fully insured, with a tracking link sent the day it leaves the warehouse.</p>
+    <p>Express is free on orders over $100. Import duties and taxes, where charged, are paid by the recipient.</p>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>Destination</th><th>Express</th><th>Priority</th></tr></thead>
+    <tbody>
+      <tr><td>Nigeria &amp; West Africa</td><td class="mono">2–4 days · $18</td><td class="mono">1–2 days · $35</td></tr>
+      <tr><td>Rest of Africa</td><td class="mono">3–6 days · $24</td><td class="mono">2–3 days · $45</td></tr>
+      <tr><td>United Kingdom &amp; Europe</td><td class="mono">3–5 days · $22</td><td class="mono">2–3 days · $40</td></tr>
+      <tr><td>USA &amp; Canada</td><td class="mono">3–5 days · $22</td><td class="mono">2–3 days · $40</td></tr>
+      <tr><td>Asia, Middle East &amp; Oceania</td><td class="mono">4–7 days · $26</td><td class="mono">3–4 days · $48</td></tr>
+    </tbody>
+  </table></div>
+</div></section>
+
+<section id="faq"><div class="wrap">
+  <div class="sec-head"><div><div class="eyebrow">Questions</div><h2>FAQ</h2></div></div>
+  <div class="faq">
+    <details open><summary>Why are prices in dollars if I pay in Bitcoin?</summary><p>Dollar prices stay stable while BTC moves. At checkout we convert your total at the rate shown on the page and give you the exact BTC amount to send. Send that amount within 30 minutes so the rate still holds.</p></details>
+    <details><summary>What happens if I send the wrong amount?</summary><p>If you underpay, we contact you for the difference before shipping. If you overpay by more than $5, we refund the extra in BTC to an address you give us.</p></details>
+    <details><summary>Which gift cards do you accept?</summary><p>Apple / iTunes, Amazon, Steam, Google Play, Razer Gold, Sephora, eBay, Nordstrom and Visa gift cards, in US dollars. Choose "Gift card" at checkout, enter your codes and send the order to us. We check every card before confirming, and your order ships only once the cards are verified. We will never ask you for gift card codes by phone, DM or email.</p></details>
+    <details><summary>Can I pay with Lightning, ETH or USDT?</summary><p>Not yet. We accept on-chain Bitcoin (BTC) only. Do not send any other coin or token to our address, because it cannot be recovered.</p></details>
+    <details><summary>How do sizes run?</summary><p>Tees and hoodies run true to size with a relaxed fit. Jackets are cut to layer over a hoodie, so size down if you prefer a close fit. High-tops follow US men's sizing; women should order 1.5 sizes down.</p></details>
+    <details><summary>What is your returns policy?</summary><p>Return unworn items in original packaging within 30 days of delivery. Refunds are paid in BTC at the dollar value of the item. Engraved and made-to-order jewelry is final sale.</p></details>
+    <details><summary>How long until my order ships?</summary><p>Within 1 business day of your payment reaching 2 confirmations, which usually takes 20–40 minutes after you send it.</p></details>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <div><a class="logo" href="#top"><svg width="40" height="26" viewBox="-50 -16 100 32" aria-hidden="true"><g id="logoMark2"></g></svg><span>Sto<i>re</i></span></a><p style="max-width:34ch;margin-top:12px">Riding apparel and metalwork built to last. Priced in USD, paid in Bitcoin.</p></div>
+  <div><h4>Shop</h4><ul><li><a href="#shop" data-filter="Jackets">Jackets</a></li><li><a href="#shop" data-filter="Hoodies">Hoodies</a></li><li><a href="#shop" data-filter="Tees">Tees &amp; Tanks</a></li><li><a href="#shop" data-filter="Jewelry">Jewelry</a></li></ul></div>
+  <div><h4>Help</h4><ul><li><a href="#pay">Paying with BTC</a></li><li><a href="#delivery">Delivery rates</a></li><li><a href="#faq">Returns</a></li><li><a href="#faq">Size guide</a></li></ul></div>
+  <div><h4>We accept</h4><p style="margin:0">Bitcoin (BTC), on-chain only.<br>Gift cards: Apple, Amazon, Steam, Google Play and more.</p></div>
+  <div class="fine"><span>© 2026 Store. All rights reserved.</span><span>BTC price: <span class="mono" id="rateFoot"></span> <span id="rateSrc">· loading live price</span></span></div>
+</div></footer>
+
+<!-- cart drawer -->
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-label="Cart">
+  <div class="dr-head"><h3>Your cart</h3><button class="x" data-close aria-label="Close cart">✕</button></div>
+  <div class="dr-body" id="cartBody"></div>
+  <div class="dr-foot" id="cartFoot"></div>
+</aside>
+
+<!-- product modal -->
+<div class="modal" id="pModal" hidden role="dialog" aria-modal="true"><div class="panel" id="pPanel"></div></div>
+<!-- checkout modal -->
+<div class="modal co" id="coModal" hidden role="dialog" aria-modal="true"><div class="panel" id="coPanel"></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+const BTC_ADDRESS = "bc1q4u4mrp0w4e2q7yam9a2xreaxz8j83cg7zr8m3a";
+let BTC_RATE = 79500; // fallback only (approx. Oct 30, 2026): replaced by the live BTC/USD price on load and every 60 seconds
+const FREE_SHIP = 100;
+/* ===== GIFT CARD PAYMENTS =====
+   Customers type in their card codes; the order + codes are sent to YOU on WhatsApp or email.
+   Check every card yourself before you confirm or ship. Nothing is confirmed automatically.
+   whatsapp: your number with country code, digits only, e.g. "2348012345678"
+   email:    your order inbox, e.g. "orders@yourdomain.com"
+   rate:     share of a card's face value you credit (1 = full value, 0.8 = 80%)
+   min:      smallest card value accepted, in USD */
+const GIFTCARD = {
+  on: true,
+  whatsapp: "",
+  email: "",
+  rate: 1,
+  min: 10,
+  brands: ["Apple / iTunes","Amazon","Steam","Google Play","Razer Gold","Sephora","eBay","Nordstrom","Visa gift card"]
+};
+const SHIP = { express:{n:"Express",d:"2–5 business days, tracked",p:22}, priority:{n:"Priority",d:"1–3 business days, signature on delivery",p:40} };
+
+const C = { tan:"#A86B32", cognac:"#B4532A", black:"#1C1A1A", red:"#C8102E", white:"#FAFAFA", grey:"#8E8C8C", charcoal:"#3A3838", oxblood:"#6E1423", indigo:"#2E4A7A", yellow:"#F5B800", gold:"#D9A521", silver:"#B9BEC4", olive:"#4F5236" };
+const APP = ["XS","S","M","L","XL","2XL","3XL"];
+const WOM = ["XS","S","M","L","XL"], GLV=["S","M","L","XL"], US=["US 7","US 8","US 9","US 10","US 11","US 12","US 13"];
+// Leather Week: sale ends Nov 9, 2026, 11:59 pm Lagos time. After this, prices return to the "was" price automatically.
+const SALE_END = new Date("2026-11-09T23:59:00+01:00");
+const SALE_ITEMS = [
+ {id:"L1",name:"Collared Leather Bomber",cat:"Jackets",img:"p/L1.jpg",price:52,was:69,colors:["black"],sizes:APP,d:"Relaxed-fit leather bomber with a point collar, raglan sleeves and ribbed cuffs and hem.",specs:["Smooth leather shell","Raglan sleeves","Welt hand pockets","Ribbed cuffs and hem"]},
+ {id:"L2",name:"Classic Asymmetric Biker",cat:"Jackets",img:"p/L2.jpg",price:55,was:75,colors:["black"],sizes:APP,d:"Black leather biker with an asymmetric zip, snap-down lapels, epaulettes and a buckled belt.",specs:["Leather shell","Asymmetric zip front","Snap lapels and epaulettes","Buckle belt, zip cuffs"]},
+ {id:"L3",name:"Café Racer Leather Jacket",cat:"Jackets",img:"p/L3.jpg",price:54,was:72,colors:["black"],sizes:APP,d:"Stand-collar café racer with a snap tab, zip chest pockets and a clean zip front.",specs:["Leather shell","Snap-tab stand collar","Zip chest and hand pockets","Panelled shoulders"]},
+ {id:"L4",name:"Studded Lapel Biker",cat:"Jackets",img:"p/L4.jpg",price:56,was:75,colors:["black"],sizes:APP,d:"Biker jacket with silver studs on the lapels and studded zip trims.",specs:["Leather shell","Studded lapels","Studded zip trims","Belted hem"]},
+ {id:"L5",name:"Leather Trucker Jacket",cat:"Jackets",img:"p/L5.jpg",price:49,was:69,colors:["black"],sizes:APP,d:"Clean shirt-collar leather jacket with a front yoke and slim metal zip.",specs:["Pebbled leather","Shirt collar","Front yoke seam","Slant hand pockets"]},
+ {id:"L6",name:"Wool & Leather Varsity",cat:"Jackets",img:"p/L6.jpg",price:48,was:65,colors:["black"],sizes:APP,d:"Black wool varsity body with leather sleeves and black-and-white striped rib trim.",specs:["Wool-blend body","Leather sleeves","Snap front","Striped rib collar, cuffs and hem"]},
+ {id:"L7",name:"Women's Belted Moto Jacket",cat:"Jackets",img:"p/L7.jpg",price:52,was:72,colors:["black"],sizes:WOM,d:"Fitted moto jacket with silver zips, snap lapels and double buckle tabs at the waist.",specs:["Leather shell","Fitted waist","Double buckle side tabs","Zip cuffs"]},
+ {id:"L8",name:"Tan Stand-Collar Rider",cat:"Jackets",img:"p/L8.jpg",price:46,was:65,colors:["tan"],sizes:APP,d:"Tan rider jacket with a stand collar, zip chest pocket and panelled body.",specs:["Leather-look shell","Stand collar","Zip chest pocket","Zip side pockets"]},
+ {id:"L9",name:"Oxblood Oversized Zip Jacket",cat:"Jackets",img:"p/L9.jpg",price:50,was:69,colors:["oxblood"],sizes:APP,d:"Boxy oversized jacket in deep oxblood with a point collar and two-way zip.",specs:["Soft leather-look shell","Oversized fit","Two-way zip","Welt pockets"]},
+ {id:"L10",name:"Women's Quilted Racer",cat:"Jackets",img:"p/L10.jpg",price:52,was:72,colors:["black"],sizes:WOM,d:"Fitted racer with quilted shoulders, a snap collar and four zip pockets.",specs:["Leather shell","Quilted shoulder panels","Snap stand collar","Four zip pockets"]},
+ {id:"L11",name:"Hooded Softshell Tactical Jacket",cat:"Jackets",img:"p/L11.jpg",price:39,was:55,colors:["charcoal"],sizes:APP,d:"Water-resistant softshell with an adjustable hood, fleece lining and zip pockets throughout.",specs:["Softshell, fleece-lined","Adjustable hood","Multiple zip pockets","Hook-and-loop sleeve panels"]},
+ {id:"L12",name:"Women's Vintage Tan Racer",cat:"Jackets",img:"p/L12.jpg",price:49,was:69,colors:["tan"],sizes:WOM,d:"Distressed tan racer with a snap stand collar, zip chest pockets and stitched panels.",specs:["Distressed leather","Snap stand collar","Zip chest pockets","Zip side pockets"]},
+ {id:"B1",name:"Side-Zip Tactical Boots",cat:"Footwear",img:"p/B1.jpg",price:56,was:75,colors:["black"],sizes:US,d:"8-inch boots with a leather and nylon upper, side zip for quick on-off and a lugged rubber sole.",specs:["Leather and nylon upper","Side zip","Lugged rubber outsole","Padded collar"]},
+ {id:"G1",name:"Cognac Touchscreen Leather Gloves",cat:"Accessories",img:"p/G1.jpg",price:21,was:29,colors:["cognac"],sizes:GLV,d:"Leather gloves with a snap wrist strap, knit inner cuff and touchscreen fingertips.",specs:["Lambskin leather","Touchscreen fingertips","Knit inner cuff","Snap wrist strap"]},
+ {id:"G2",name:"Black Wrist-Strap Leather Gloves",cat:"Accessories",img:"p/G2.jpg",price:18,was:25,colors:["black"],sizes:GLV,d:"Smooth black leather gloves with a snap strap and knit cuff.",specs:["Leather shell","Snap wrist strap","Knit cuff","Warm lining"]},
+ {id:"G3",name:"Contrast-Stitch Leather Gloves",cat:"Accessories",img:"p/G3.jpg",price:19,was:27,colors:["black"],sizes:GLV,d:"Black leather gloves with white contrast stitching and a buckled wrist strap.",specs:["Leather shell","Contrast back stitching","Buckled wrist strap","Warm lining"]},
+ {id:"G4",name:"Burgundy Dress Gloves",cat:"Accessories",img:"p/G4.jpg",price:21,was:29,colors:["oxblood"],sizes:GLV,d:"Burgundy leather gloves with three-point stitching and a button vent at the wrist.",specs:["Soft leather","Three-point stitching","Button wrist vent","Slim fit"]},
+ {id:"G5",name:"Hard-Knuckle Tactical Gloves",cat:"Accessories",img:"p/G5.jpg",price:17,was:24,colors:["black"],sizes:GLV,d:"Full-finger gloves with hard knuckle guards, padded fingers and a hook-and-loop wrist.",specs:["Hard knuckle shell","Padded fingers","Hook-and-loop wrist","Breathable back"]},
+ {id:"G6",name:"Padded Tactical Gloves",cat:"Accessories",img:"p/G6.jpg",price:16,was:23,colors:["black"],sizes:GLV,d:"Lightweight padded gloves with a textured palm and adjustable wrist strap.",specs:["Padded back","Textured grip palm","Adjustable wrist strap","Pull tab"]},
+ {id:"M1",name:"Thermal Balaclava",cat:"Headwear",img:"p/M1.jpg",price:15,was:20,colors:["black"],sizes:["One size"],d:"Stretch balaclava that covers head, face and neck for cold, windy rides.",specs:["Stretch fabric","Wide eye opening","Long neck cover","Fits under a helmet"]}
+].map(p=>({...p,type:"img",tag:"Sale",col:"Leather Week"}));
+
+/* ===== NEW ARRIVALS: N30, N31, N32 ... =====
+   (N1–N29 are taken by the photos for the existing products, see PHOTO CODES below.)
+   To add a product:
+   1. Name its photo after the product code and put it in the "p" folder:
+      p/N30.jpg, p/N31.jpg, p/N32.jpg ...  (.jpg, .jpeg, .png or .webp all work)
+   2. Add one line below with that same code as its id. The code is the label that
+      links photo to product: id "N30" always shows p/N30, whatever order the lines are in.
+   3. cat must be one of: Jackets, Hoodies, Tees, Headwear, Footwear, Jewelry, Accessories.
+   4. Optional: add was:<old price> to show it on sale.
+   If a photo is missing, the card says "Photo N30 not found" instead of showing the wrong picture.
+   Example line:
+   {id:"N30", name:"Black Leather Belt", cat:"Accessories", price:25, colors:["black"], sizes:["S","M","L"], d:"Short description.", specs:["Detail one","Detail two"]},
+*/
+const NEW_ITEMS = [
+
+].map(p=>({type:"img",colors:["black"],sizes:["One size"],d:"",specs:[],col:"New Arrivals",tag:p.was?"Sale":"New",...p,id:String(p.id).toUpperCase()}));
+const P = [
+ {id:"j1",name:"Gold Spoke Bomber",cat:"Jackets",type:"bomber",price:72,colors:["black","oxblood"],sizes:APP,tag:"Bestseller",col:"Iron Road",d:"Satin-shell bomber with an embroidered winged-wheel crest across the back and gold-tipped rib trim.",specs:["Satin nylon shell, quilted lining","Back embroidery, 14,000 stitches","Two-way YKK zip","Ribbed collar, cuffs and hem"]},
+ {id:"j2",name:"Redline Track Jacket",cat:"Jackets",type:"jacket",price:65,colors:["black","red"],sizes:APP,tag:"New",col:"Redline",d:"Stand-collar track jacket with contrast striping at collar, cuffs and hem, and a woven crest on the chest.",specs:["Water-resistant softshell","Fleece-backed interior","Zip hand pockets","Reflective rear panel"]},
+ {id:"j3",name:"Iron Road Coach Jacket",cat:"Jackets",type:"jacket",price:58,colors:["black","white"],sizes:APP,col:"Iron Road",d:"Snap-front coach jacket with a large back print and a light mesh lining for warm-weather rides.",specs:["Nylon taslan shell","Mesh lining","Snap front, drawcord hem","Screen-printed back graphic"]},
+ {id:"j4",name:"Waxed Rider Jacket",cat:"Jackets",type:"jacket",price:75,colors:["black","olive"],sizes:APP,tag:"Limited",col:"Iron Road",d:"Heavy waxed-cotton rider jacket with brass hardware. Wears in and darkens with every season.",specs:["12 oz waxed cotton","Corduroy collar","Brass zips and snaps","Armor-ready elbow pockets"]},
+ {id:"v1",name:"Road Captain Denim Vest",cat:"Jackets",type:"vest",price:49,colors:["indigo","black"],sizes:APP,col:"Iron Road",d:"Rigid denim vest with a clean back panel, ready for your own patches.",specs:["14 oz rigid denim","Two inside pockets","Antique-brass buttons","Blank back panel"]},
+ {id:"h1",name:"Winged Wheel Heavy Hoodie",cat:"Hoodies",type:"hoodie",price:55,colors:["black","red","white"],sizes:APP,tag:"Bestseller",col:"Iron Road",d:"Our heaviest hoodie, with a puff-printed winged-wheel crest and sleeve hits on both arms.",specs:["480 gsm brushed fleece","Double-lined hood","Puff print front, sleeve prints","Pre-shrunk"]},
+ {id:"h2",name:"Redline Zip Hoodie",cat:"Hoodies",type:"hoodie",price:58,colors:["red","black"],sizes:APP,tag:"New",col:"Redline",d:"Full-zip hoodie in signal red with a yellow crest and a metal zip pull.",specs:["420 gsm fleece","Metal zip with crest pull","Kangaroo pocket","Ribbed cuffs and hem"]},
+ {id:"h3",name:"Night Run Hoodie",cat:"Hoodies",type:"hoodie",price:52,colors:["charcoal","black"],sizes:APP,col:"Iron Road",d:"Tonal pullover with a reflective back print that lights up in headlights.",specs:["400 gsm fleece","Reflective back print","Thumbhole cuffs","Relaxed fit"]},
+ {id:"t1",name:"Winged Wheel Tee",cat:"Tees",type:"tee",price:25,colors:["white","black","red"],sizes:APP,tag:"Bestseller",col:"Iron Road",d:"The house tee. Heavyweight cotton with the winged-wheel crest on the chest.",specs:["240 gsm combed cotton","Boxy fit","Screen-printed crest","Taped neck seam"]},
+ {id:"t2",name:"Iron Road Back-Print Tee",cat:"Tees",type:"tee",price:27,colors:["black","grey"],sizes:APP,col:"Iron Road",d:"Large back graphic with the crest and an 'Iron Road' banner, small crest at the chest.",specs:["240 gsm cotton","Front and back print","Garment-dyed","Relaxed fit"]},
+ {id:"t3",name:"Gold Spoke Tee",cat:"Tees",type:"tee",price:25,colors:["white","yellow"],sizes:APP,col:"Gold Spoke",d:"Warm-weather tee with a gold metallic crest print.",specs:["220 gsm cotton","Metallic gold ink","Regular fit","Side-seamed"]},
+ {id:"t4",name:"Redline Long Sleeve",cat:"Tees",type:"longsleeve",price:32,colors:["black","white"],sizes:APP,tag:"New",col:"Redline",d:"Long-sleeve tee with sleeve text and a chest crest, made for layering under a jacket.",specs:["240 gsm cotton","Sleeve print","Ribbed cuffs","Regular fit"]},
+ {id:"k1",name:"Throttle Tank",cat:"Tees",type:"tank",price:18,colors:["red","black","white"],sizes:["XS","S","M","L","XL"],col:"Redline",d:"Slim strap tank with an arched banner over the crest.",specs:["Cotton-elastane rib","Slim fit","Adjustable straps","Screen print"]},
+ {id:"k2",name:"Open Road Muscle Tank",cat:"Tees",type:"muscle",price:20,colors:["black","white"],sizes:APP,col:"Iron Road",d:"Dropped-armhole muscle tank cut for hot rides.",specs:["200 gsm cotton","Dropped armholes","Raw-edge hem","Front crest print"]},
+ {id:"c1",name:"Winged Wheel Fitted Cap",cat:"Headwear",type:"cap",price:22,colors:["grey","black","red"],sizes:["S/M","L/XL"],tag:"Bestseller",col:"Iron Road",d:"Stretch-fit six-panel cap with a raised 3D-embroidered crest.",specs:["Cotton twill, stretch band","3D embroidery","Curved brim","Fitted sizes"]},
+ {id:"c2",name:"Road Trucker Cap",cat:"Headwear",type:"cap",price:20,colors:["black","white"],sizes:["One size"],col:"Gold Spoke",d:"Foam-front trucker with mesh back and gold crest.",specs:["Foam front, mesh back","Snapback closure","Gold print","Pre-curved brim"]},
+ {id:"c3",name:"Watch Beanie",cat:"Headwear",type:"beanie",price:18,colors:["black","red","grey"],sizes:["One size"],col:"Iron Road",d:"Ribbed cuff beanie with a woven crest label.",specs:["Merino-acrylic blend","Double layer","Woven label","Pom-pom top"]},
+ {id:"f1",name:"Redline High-Top",cat:"Footwear",type:"sneaker",price:62,colors:["black","red"],sizes:["US 7","US 8","US 9","US 10","US 11","US 12","US 13"],tag:"New",col:"Redline",d:"Canvas high-top with a printed side crest, rubber toe cap and a red-striped vulcanized sole.",specs:["12 oz canvas upper","Vulcanized rubber sole","Cushioned insole","Metal eyelets"]},
+ {id:"f2",name:"Gold Spoke High-Top",cat:"Footwear",type:"sneaker",price:62,colors:["white","yellow"],sizes:["US 7","US 8","US 9","US 10","US 11","US 12","US 13"],col:"Gold Spoke",d:"Clean white high-top with a gold side crest.",specs:["Canvas upper","Gold print crest","Vulcanized sole","Padded collar"]},
+ {id:"f3",name:"Pit Stop Slides",cat:"Footwear",type:"slides",price:22,colors:["red","black"],sizes:["US 7","US 8","US 9","US 10","US 11","US 12","US 13"],col:"Redline",d:"Molded slides with a debossed crest on the strap.",specs:["EVA footbed","Contoured arch","Debossed strap","Quick-dry"]},
+ {id:"r1",name:"Winged Wheel Signet Ring",cat:"Jewelry",type:"ring",price:35,colors:["silver","gold"],sizes:["8","9","10","11","12","13"],tag:"Bestseller",col:"Iron Road",d:"Heavy signet ring with the crest in relief on a hammered face.",specs:["316L stainless steel","Gold option is 18k PVD","Hammered face","Polished band"]},
+ {id:"r2",name:"Red Enamel Signet",cat:"Jewelry",type:"ring",price:48,colors:["gold"],enamel:true,sizes:["8","9","10","11","12","13"],tag:"Limited",col:"Redline",d:"Brass signet with hand-filled red enamel side panels and scrollwork.",specs:["Solid brass, gold plated","Hand-filled enamel","Scroll engraving","Gift box included"]},
+ {id:"pd1",name:"Winged Wheel Pendant",cat:"Jewelry",type:"pendant",price:42,colors:["gold","silver"],sizes:["One size"],col:"Gold Spoke",d:"Cast pendant with spread wings on a 24-inch curb chain.",specs:["Stainless steel, PVD gold option","60 mm pendant","24 in curb chain","Lobster clasp"]},
+ {id:"ch1",name:"Two-Tone Curb Chain",cat:"Jewelry",type:"chain",price:55,colors:["gold"],sizes:['20"','22"','24"'],col:"Gold Spoke",d:"Heavy curb chain alternating steel and gold links.",specs:["8 mm stainless curb","Alternating gold PVD","Box clasp","Tarnish resistant"]},
+ {id:"p1",name:"Wing Lapel Pin",cat:"Jewelry",type:"pin",price:15,colors:["gold","silver","red"],sizes:["One size"],tag:"New",col:"Iron Road",d:"Die-struck wing pin with double clutch backs.",specs:["Die-struck zinc alloy","Hard enamel option","Two clutch backs","45 mm wide"]},
+ {id:"a1",name:"Engraved Rider Buckle",cat:"Accessories",type:"buckle",price:38,colors:["gold","silver"],sizes:["One size"],col:"Iron Road",d:"Oval belt buckle with western scroll engraving. Add your own name or club at no charge.",specs:["Solid brass, plated","Fits 1.5 in belts","Free custom engraving","Rope-edge border"]},
+ {id:"a2",name:"Wallet Chain",cat:"Accessories",type:"walletchain",price:24,colors:["silver","gold"],sizes:["One size"],col:"Iron Road",d:"Heavy-link wallet chain with trigger clips at both ends.",specs:["Stainless steel","45 cm length","Two trigger clips","Belt-loop clip"]},
+ {id:"a3",name:"Leather Riding Gloves",cat:"Accessories",type:"gloves",price:34,colors:["black","oxblood"],sizes:["S","M","L","XL"],col:"Iron Road",d:"Goatskin riding gloves with knuckle padding and a debossed crest.",specs:["Goatskin leather","Padded knuckles","Touchscreen fingertips","Velcro wrist"]},
+ {id:"a4",name:"Paisley Bandana",cat:"Accessories",type:"bandana",price:15,colors:["red","black","yellow"],sizes:["One size"],col:"Redline",d:"Cotton bandana with a paisley field and crest corners.",specs:["100% cotton","55 × 55 cm","Rolled hem","Pre-washed"]}
+];
+/* ===== PHOTO CODES for the existing products =====
+   Save each real photo in the "p" folder with its code: p/N1.jpg ... p/N29.jpg
+   Until a photo is added, the product keeps its drawn illustration. */
+const PHOTO_CODES = {
+ j1:"N1",  // Gold Spoke Bomber (black)
+ j2:"N2",  // Redline Track Jacket (black)
+ j3:"N3",  // Iron Road Coach Jacket (black)
+ j4:"N4",  // Waxed Rider Jacket (black)
+ v1:"N5",  // Road Captain Denim Vest (indigo denim)
+ h1:"N6",  // Winged Wheel Heavy Hoodie (black)
+ h2:"N7",  // Redline Zip Hoodie (red)
+ h3:"N8",  // Night Run Hoodie (charcoal)
+ t1:"N9",  // Winged Wheel Tee (white)
+ t2:"N10", // Iron Road Back-Print Tee (black)
+ t3:"N11", // Gold Spoke Tee (white)
+ t4:"N12", // Redline Long Sleeve (black)
+ k1:"N13", // Throttle Tank (red)
+ k2:"N14", // Open Road Muscle Tank (black)
+ c1:"N15", // Winged Wheel Fitted Cap (grey)
+ c2:"N16", // Road Trucker Cap (black)
+ c3:"N17", // Watch Beanie (black)
+ f1:"N18", // Redline High-Top (black)
+ f2:"N19", // Gold Spoke High-Top (white)
+ f3:"N20", // Pit Stop Slides (red)
+ r1:"N21", // Winged Wheel Signet Ring (silver)
+ r2:"N22", // Red Enamel Signet (gold)
+ pd1:"N23",// Winged Wheel Pendant (gold)
+ ch1:"N24",// Two-Tone Curb Chain (gold)
+ p1:"N25", // Wing Lapel Pin (gold)
+ a1:"N26", // Engraved Rider Buckle (gold)
+ a2:"N27", // Wallet Chain (silver)
+ a3:"N28", // Leather Riding Gloves (black)
+ a4:"N29"  // Paisley Bandana (red)
+};
+P.forEach(p=>{if(PHOTO_CODES[p.id])p.photo=PHOTO_CODES[p.id]});
+NEW_ITEMS.forEach(p=>{if(Object.values(PHOTO_CODES).includes(p.id))console.warn(p.id,"is already used by an existing product. Start new arrivals at N30.")});
+P.unshift(...NEW_ITEMS,...SALE_ITEMS);
+{const seen=new Set();P.forEach(p=>{if(seen.has(p.id))console.warn("Two products share the code",p.id,"- give each its own code");seen.add(p.id)})}
+const SALE_ON = Date.now() < SALE_END;
+if(!SALE_ON) P.forEach(p=>{if(p.was){p.price=p.was;delete p.was;p.tag="New"}});
+const pct = p => p.was ? Math.round((1-p.price/p.was)*100) : 0;
+const CATS = ["Jackets","Hoodies","Tees","Headwear","Footwear","Jewelry","Accessories"];
+const isNew = p => p.tag==="New";
+
+/* ---------- art ---------- */
+function crest(x,y,s,wheel,wing,hub){
+  hub = hub||wheel;
+  const f = "M13,-5 L46,-14 L42,-8 L52,-7 L44,-2 L50,1 L40,3 L44,6 L13,5Z";
+  const sp = [0,60,120].map(a=>`<line x1="${-9*Math.cos(a*Math.PI/180)}" y1="${-9*Math.sin(a*Math.PI/180)}" x2="${9*Math.cos(a*Math.PI/180)}" y2="${9*Math.sin(a*Math.PI/180)}" stroke="${wheel}" stroke-width="1.6"/>`).join("");
+  return `<g transform="translate(${x},${y}) scale(${s})"><path d="${f}" fill="${wing}"/><path d="${f}" fill="${wing}" transform="scale(-1,1)"/><circle r="10.5" fill="none" stroke="${wheel}" stroke-width="3"/>${sp}<circle r="3" fill="${hub}"/></g>`;
+}
+const EXTS=[".jpg",".jpeg",".png",".webp",".JPG",".JPEG",".PNG"];
+const NOPHOTO=new Set(), FOUND={};
+function imgFallback(el){const code=el.dataset.code,i=+(el.dataset.try||0)+1;
+  if(i>=EXTS.length){el.onerror=null;NOPHOTO.add(code);
+    const p=P.find(x=>x.id===el.dataset.pid);
+    if(p&&p.type!=="img"){el.outerHTML=art(p,+el.dataset.ci||0,true);return}
+    const d=document.createElement("div");d.className="pimg missing";d.textContent="Photo "+code+" not found";el.replaceWith(d);return}
+  el.dataset.try=i;el.src="p/"+code+EXTS[i]}
+function imgFound(el){FOUND[el.dataset.code]=EXTS[+(el.dataset.try||0)]}
+function lum(h){const n=parseInt(h.slice(1),16);return (0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255}
+function shade(h,a){const n=parseInt(h.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;const f=v=>Math.max(0,Math.min(255,Math.round(v+a*255)));return "#"+[f(r),f(g),f(b)].map(v=>v.toString(16).padStart(2,"0")).join("")}
+function motifCols(base){const L=lum(base);if(base===C.red)return[C.white,C.yellow];if(base===C.yellow)return[C.red,C.white];return L>0.6?[C.red,C.yellow]:[C.white,C.yellow]}
+const TOP_SL="M95,60 L125,48 Q150,62 175,48 L205,60 L250,95 L228,125 L205,112 L205,250 L95,250 L95,112 L72,125 L50,95 Z";
+const LONG="M95,60 L125,48 Q150,62 175,48 L205,60 L238,150 L250,232 L226,236 L207,162 L205,250 L95,250 L93,162 L74,236 L50,232 L62,150 Z";
+function art(p,ci,drawn){
+  if(p.img) return `<img class="pimg" src="${p.img}" alt="${p.name}" loading="lazy" decoding="async">`;
+  const code=p.photo||(/^N\d+$/.test(p.id)?p.id:null);
+  if(code&&!drawn){
+    if(FOUND[code]) return `<img class="pimg" src="p/${code}${FOUND[code]}" alt="${p.name}" loading="lazy" decoding="async">`;
+    if(!NOPHOTO.has(code)) return `<img class="pimg" src="p/${code}.jpg" data-code="${code}" data-pid="${p.id}" data-ci="${ci||0}" alt="${p.name}" loading="lazy" decoding="async" onload="imgFound(this)" onerror="imgFallback(this)">`;
+    if(p.type==="img") return `<div class="pimg missing">Photo ${code} not found</div>`;
+  }
+  ci=ci||0; const cn=p.colors[ci]||p.colors[0]; const c=C[cn]; const dk=shade(c,-.12); const [m1,m2]=motifCols(c);
+  const stroke=`stroke="${shade(c,-.25)}" stroke-width="1.5" stroke-linejoin="round"`;
+  let g="";
+  switch(p.type){
+   case "tee": g=`<path d="${TOP_SL}" fill="${c}" ${stroke}/><path d="M125,48 Q150,66 175,48" fill="none" stroke="${dk}" stroke-width="5"/>${crest(150,120,1.25,m1,m2)}<text x="150" y="160" text-anchor="middle" font-family="Big Shoulders Display,Impact" font-weight="900" font-size="20" fill="${m1}" letter-spacing="2">${p.id==="t2"?"IRON ROAD":p.id==="t3"?"GOLD SPOKE":"STORE"}</text>`;break;
+   case "longsleeve": g=`<path d="${LONG}" fill="${c}" ${stroke}/><path d="M125,48 Q150,66 175,48" fill="none" stroke="${dk}" stroke-width="5"/>${crest(150,115,1.1,m1,m2)}<text x="150" y="150" text-anchor="middle" font-family="Big Shoulders Display,Impact" font-weight="900" font-size="18" fill="${C.red===c?C.white:C.red}" letter-spacing="2">REDLINE</text><text transform="translate(236,190) rotate(68)" font-family="Big Shoulders Display,Impact" font-weight="900" font-size="11" fill="${m1}" letter-spacing="1">REDLINE</text>`;break;
+   case "tank": g=`<path d="M110,48 L124,48 Q150,98 176,48 L190,48 L193,104 Q207,120 207,142 L205,252 L95,252 L93,142 Q93,120 107,104 Z" fill="${c}" ${stroke}/><path d="M112,190 A60 60 0 0 1 188,190" fill="none"/><path id="arc${p.id}${ci}" d="M104,150 A50 50 0 0 1 196,150" fill="none"/><text font-family="Big Shoulders Display,Impact" font-weight="900" font-size="17" fill="${m1}" letter-spacing="1.5"><textPath href="#arc${p.id}${ci}" startOffset="50%" text-anchor="middle">THROTTLE</textPath></text>${crest(150,168,1.05,m1,m2)}`;break;
+   case "muscle": g=`<path d="M108,52 L126,48 Q150,66 174,48 L192,52 L190,110 Q212,124 212,150 L210,252 L90,252 L88,150 Q88,124 110,110 Z" fill="${c}" ${stroke}/>${crest(150,128,1.2,m1,m2)}<text x="150" y="168" text-anchor="middle" font-family="Big Shoulders Display,Impact" font-weight="900" font-size="18" fill="${m1}" letter-spacing="2">OPEN ROAD</text>`;break;
+   case "hoodie": g=`<path d="${LONG}" fill="${c}" ${stroke}/><path d="M114,64 Q118,22 150,20 Q182,22 186,64 Q150,86 114,64Z" fill="${dk}" ${stroke}/><path d="M126,62 Q150,78 174,62" fill="none" stroke="${shade(c,-.3)}" stroke-width="3"/><line x1="140" y1="72" x2="138" y2="112" stroke="${m1}" stroke-width="2.5"/><line x1="160" y1="72" x2="162" y2="112" stroke="${m1}" stroke-width="2.5"/>${p.id==="h2"?`<line x1="150" y1="70" x2="150" y2="250" stroke="${shade(c,-.3)}" stroke-width="3"/>`:""}<path d="M112,196 L188,196 L198,238 L102,238Z" fill="${dk}"/>${crest(150,152,1.2,m1,m2)}${crest(232,214,.42,m1,m2)}${crest(68,214,.42,m1,m2)}`;break;
+   case "jacket": case "bomber": {const rib=p.type==="bomber"?C.gold:C.white;
+     g=`<path d="${LONG}" fill="${c}" ${stroke}/><rect x="122" y="40" width="56" height="16" rx="4" fill="${dk}"/><line x1="124" y1="47" x2="176" y2="47" stroke="${rib}" stroke-width="2"/><line x1="150" y1="56" x2="150" y2="250" stroke="${shade(c,-.3)}" stroke-width="3"/><rect x="95" y="236" width="110" height="14" fill="${dk}"/><line x1="95" y1="242" x2="205" y2="242" stroke="${rib}" stroke-width="2.5"/><g transform="rotate(-8 238 232)"><rect x="226" y="224" width="26" height="10" fill="${dk}"/><line x1="226" y1="229" x2="252" y2="229" stroke="${rib}" stroke-width="2"/></g><g transform="rotate(8 62 232)"><rect x="48" y="224" width="26" height="10" fill="${dk}"/><line x1="48" y1="229" x2="74" y2="229" stroke="${rib}" stroke-width="2"/></g>${crest(122,100,.62,m1,m2)}${p.id==="j4"?`<rect x="104" y="150" width="34" height="26" rx="3" fill="${dk}"/><rect x="162" y="150" width="34" height="26" rx="3" fill="${dk}"/>`:""}`;}break;
+   case "vest": g=`<path d="M104,48 L134,48 L150,112 L166,48 L196,48 L199,104 Q212,120 212,142 L210,252 L90,252 L88,142 Q88,120 101,104 Z" fill="${c}" ${stroke}/><line x1="150" y1="112" x2="150" y2="252" stroke="${shade(c,-.3)}" stroke-width="2.5" stroke-dasharray="1 0"/>${[140,170,200,230].map(y=>`<circle cx="142" cy="${y}" r="3.2" fill="${C.gold}"/>`).join("")}<path d="M104,48 L134,48 L150,112" fill="none" stroke="${C.gold}" stroke-width="1.5" stroke-dasharray="3 3"/><path d="M196,48 L166,48 L150,112" fill="none" stroke="${C.gold}" stroke-width="1.5" stroke-dasharray="3 3"/><rect x="110" y="130" width="28" height="22" rx="2" fill="${dk}"/><rect x="162" y="130" width="28" height="22" rx="2" fill="${dk}"/>`;break;
+   case "cap": g=`<path d="M78,172 Q82,92 150,86 Q218,92 222,172 Z" fill="${c}" ${stroke}/><path d="M150,86 L150,172 M114,92 Q105,130 108,172 M186,92 Q195,130 192,172" stroke="${dk}" stroke-width="1.5" fill="none"/><circle cx="150" cy="87" r="5" fill="${dk}"/><path d="M58,172 Q150,150 242,176 Q254,196 226,204 Q150,186 74,200 Q46,196 58,172Z" fill="${dk}" ${stroke}/>${p.id==="c2"?`<path d="M180,94 Q212,110 220,168 L192,168 Q190,122 176,96Z" fill="${shade(c,.08)}" opacity=".6"/>`:""}${crest(150,136,1.05,p.id==="c2"?C.gold:m1,p.id==="c2"?C.gold:m2)}`;break;
+   case "beanie": g=`<path d="M92,196 Q88,100 150,92 Q212,100 208,196Z" fill="${c}" ${stroke}/>${[110,125,140,155,170,185].map(x=>`<line x1="${x}" y1="${x<150?120-(150-x)*0.2:120-(x-150)*0.2}" x2="${x}" y2="178" stroke="${dk}" stroke-width="2"/>`).join("")}<circle cx="150" cy="82" r="18" fill="${dk}"/><rect x="84" y="172" width="132" height="46" rx="10" fill="${dk}" ${stroke}/><rect x="132" y="184" width="36" height="22" rx="2" fill="${C.white}"/>${crest(150,195,.45,C.red,C.yellow)}`;break;
+   case "sneaker": {const up=c, sole=C.white;
+     g=`<path d="M52,206 L64,108 Q68,92 90,92 L118,94 Q126,140 168,150 L232,164 Q258,172 258,196 L258,206Z" fill="${up}" ${stroke}/><path d="M232,164 Q258,172 258,196 L258,206 L218,206 Q214,178 232,164Z" fill="${sole}" stroke="#ccc"/><rect x="48" y="204" width="214" height="24" rx="6" fill="${sole}" stroke="#ccc"/><line x1="52" y1="214" x2="258" y2="214" stroke="${C.red}" stroke-width="3"/>${[108,118,128,138].map((y,i)=>`<line x1="${112+i*10}" y1="${y}" x2="${126+i*12}" y2="${y+10}" stroke="${C.white}" stroke-width="3" stroke-linecap="round"/>`).join("")}${[104,116,128,140].map((y,i)=>`<circle cx="${110+i*11}" cy="${y}" r="2.6" fill="${C.silver}"/>`).join("")}<circle cx="78" cy="186" r="9" fill="${C.white}" stroke="#ccc"/>${crest(100,160,.85,c===C.white?C.gold:C.white,c===C.white?C.gold:C.yellow,C.red)}`;}break;
+   case "slides": g=[95,195].map(x=>`<ellipse cx="${x}" cy="160" rx="42" ry="90" fill="${C.white}" stroke="#ccc" stroke-width="2"/><path d="M${x-44},110 Q${x},88 ${x+44},110 L${x+44},150 Q${x},135 ${x-44},150Z" fill="${c}" ${stroke}/>${crest(x,122,.62,m1,m2)}`).join("");break;
+   case "ring": {const m=C[cn];const dm=shade(m,-.25);
+     g=`<ellipse cx="150" cy="200" rx="70" ry="30" fill="none" stroke="${dm}" stroke-width="20"/><ellipse cx="150" cy="196" rx="70" ry="30" fill="none" stroke="${m}" stroke-width="16"/><path d="M92,180 L106,104 Q150,88 194,104 L208,180 Q150,196 92,180Z" fill="${dm}"/><ellipse cx="150" cy="104" rx="48" ry="40" fill="${m}" stroke="${dm}" stroke-width="4"/>${p.enamel?`<ellipse cx="150" cy="104" rx="40" ry="32" fill="${C.red}"/><path d="M98,150 Q120,140 112,170 M202,150 Q180,140 188,170" stroke="${m}" stroke-width="3" fill="none"/><rect x="104" y="138" width="10" height="34" fill="${C.red}" transform="skewY(-10)"/>`:`<ellipse cx="150" cy="104" rx="40" ry="32" fill="${dm}" opacity=".5"/>`}${crest(150,104,.78,shade(m,.15),shade(m,.15),p.enamel?C.white:shade(m,.2))}`;}break;
+   case "pendant": {const m=C[cn];const dm=shade(m,-.25);
+     let ch="";for(let i=0;i<22;i++){const a=Math.PI*(0.08+0.84*i/21);const x=150+110*Math.cos(a+Math.PI);const y=150-110*Math.sin(a);ch+=`<ellipse cx="${x}" cy="${y}" rx="6" ry="4" fill="none" stroke="${m}" stroke-width="2.4" transform="rotate(${-(a*180/Math.PI)+90} ${x} ${y})"/>`}
+     g=`${ch}<circle cx="150" cy="192" r="6" fill="none" stroke="${m}" stroke-width="3"/>${crest(150,222,2.2,dm,m,C.red)}`;}break;
+   case "chain": {let ch="";const cols=[C.silver,C.gold];for(let i=0;i<30;i++){const a=2*Math.PI*i/30;const x=150+95*Math.cos(a);const y=150+80*Math.sin(a);ch+=`<ellipse cx="${x}" cy="${y}" rx="10" ry="6" fill="none" stroke="${cols[i%2]}" stroke-width="4" transform="rotate(${a*180/Math.PI+90} ${x} ${y})"/>`}
+     g=`${ch}<rect x="136" y="222" width="28" height="16" rx="3" fill="${C.silver}" stroke="#999"/>`;}break;
+   case "pin": {const m=C[cn];const dm=shade(m,-.25); g=`<rect x="0" y="0" width="300" height="300" fill="#2B4A6B" opacity=".18"/>${crest(150,150,2.6,p.colors[ci]==="red"?C.gold:dm,m,p.colors[ci]==="red"?C.white:dm)}`;}break;
+   case "buckle": {const m=C[cn];const dm=shade(m,-.3);
+     g=`<ellipse cx="150" cy="150" rx="120" ry="86" fill="${m}" stroke="${dm}" stroke-width="3"/><ellipse cx="150" cy="150" rx="108" ry="76" fill="none" stroke="${dm}" stroke-width="5" stroke-dasharray="4 3"/><ellipse cx="150" cy="150" rx="96" ry="64" fill="${shade(m,.12)}"/>${[0,1,2,3].map(i=>`<path d="M${70+i*45},${180+(i%2)*8} q12,-14 24,0 t24,0" fill="none" stroke="${dm}" stroke-width="2" opacity=".6"/>`).join("")}${crest(150,128,1.6,dm,dm,C.red)}<path d="M84,170 Q150,192 216,170 L212,186 Q150,206 88,186Z" fill="${dm}"/><text x="150" y="190" text-anchor="middle" font-family="Big Shoulders Display,Impact" font-weight="800" font-size="12" fill="${shade(m,.2)}" letter-spacing="1.5">YOUR NAME HERE</text>`;}break;
+   case "walletchain": {const m=C[cn];let ch="";for(let i=0;i<24;i++){const t=i/23;const x=60+180*t;const y=110+90*Math.sin(Math.PI*t);ch+=`<ellipse cx="${x}" cy="${y}" rx="9" ry="5.5" fill="none" stroke="${m}" stroke-width="3.5" transform="rotate(${i%2?60:-10} ${x} ${y})"/>`}
+     g=`${ch}<path d="M44,80 q16,-20 32,0 l-4,30 h-24z" fill="none" stroke="${m}" stroke-width="5"/><path d="M224,80 q16,-20 32,0 l-4,30 h-24z" fill="none" stroke="${m}" stroke-width="5"/>`;}break;
+   case "gloves": g=[0,1].map(i=>{const tx=i?165:40;return `<g transform="translate(${tx},40) ${i?"scale(-1,1) translate(-95,0)":""}"><path d="M15,90 L15,30 Q15,20 25,20 Q35,20 35,30 L35,80 L37,15 Q37,5 47,5 Q57,5 57,15 L57,80 L60,20 Q60,10 70,10 Q80,10 80,20 L80,90 L82,45 Q82,36 90,36 Q98,36 98,46 L96,130 Q94,170 60,180 L40,180 Q12,170 12,130 L0,100 Q-4,86 8,84Z" fill="${c}" ${stroke}/><rect x="16" y="168" width="72" height="28" rx="4" fill="${dk}"/>${[30,52,74].map(x=>`<rect x="${x-9}" y="96" width="18" height="12" rx="4" fill="${dk}"/>`).join("")}${crest(52,140,.6,C.gold,C.gold)}</g>`}).join("");break;
+   case "bandana": {g=`<g transform="rotate(45 150 150)"><rect x="60" y="60" width="180" height="180" fill="${c}" ${stroke}/><rect x="72" y="72" width="156" height="156" fill="none" stroke="${m1}" stroke-width="2" stroke-dasharray="6 4"/>${[0,1,2,3,4,5,6,7,8].map(i=>`<path d="M${90+(i%3)*55},${100+Math.floor(i/3)*50} q10,-14 18,0 q4,10 -8,14 q-12,2 -10,-14" fill="none" stroke="${m1}" stroke-width="2"/>`).join("")}${crest(150,150,.7,m1,m2)}</g>`;}break;
+  }
+  return `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${p.name} in ${cn}">${g}</svg>`;
+}
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const usd=n=>"$"+n.toFixed(2);
+let LOCK=null; // BTC rate frozen for a customer's payment quote
+const curRate=()=>(LOCK&&!$("#coModal").hidden)?LOCK:BTC_RATE;
+const btc=n=>(n/curRate()).toFixed(8);
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,2400)}
+let cart=[];try{cart=JSON.parse(localStorage.getItem("store_cart")||"[]")}catch(e){}
+function save(){try{localStorage.setItem("store_cart",JSON.stringify(cart))}catch(e){}}
+
+/* ---------- static fills ---------- */
+$("#logoMark").parentNode.innerHTML=crest(0,0,1,"#C8102E","#C8102E");
+$("#logoMark2").parentNode.innerHTML=crest(0,0,1,"#FFFFFF","#F5B800");
+$("#rateTop").textContent="$"+BTC_RATE.toLocaleString();
+$("#rateFoot").textContent="$"+BTC_RATE.toLocaleString();
+$("#heroArt").innerHTML=art(P.find(x=>x.id==="j1"),0,true).replace(/^<svg[^>]*>|<\/svg>$/g,"");
+
+/* ===== LOGO AND HERO IMAGE =====
+   Save these in the "p" folder (any of .png .jpg .jpeg .webp .svg):
+   p/logo        your logo for the top bar (a transparent .png or .svg looks best)
+   p/logo-white  optional: a white version for the dark footer
+   p/Hero.jpg    the big picture at the top of the page (capital H)
+   Until a file is added, the current drawn logo and jacket stay in place.
+   HERO_PRODUCT: the product code shown in the little price tag on the hero picture,
+   e.g. "L2" or "N6". Leave it "" to hide the tag when you use your own hero picture. */
+const HERO_PRODUCT = "";
+const IMG_EXTS=[".png",".jpg",".jpeg",".webp",".svg",".PNG",".JPG",".JPEG"];
+function findImg(name){return new Promise(res=>{let i=0;const im=new Image();
+  im.onload=()=>res(im.src);im.onerror=()=>{i++;if(i<IMG_EXTS.length)im.src="p/"+name+IMG_EXTS[i];else res(null)};
+  im.src="p/"+name+IMG_EXTS[0]})}
+function heroTag(id,label){const p=P.find(x=>x.id===id);const t=$("#heroTag");
+  if(!p){t.hidden=true;return}
+  t.hidden=false;t.dataset.open=p.id;t.innerHTML=`<small>${label||(p.was?"On sale":p.tag||"Featured")}</small><b>${p.name}</b><div class="p">${usd(p.price)}${p.was?` <s style="color:var(--muted);font-weight:400">${usd(p.was)}</s>`:""}</div>`}
+heroTag(HERO_PRODUCT||"j1",HERO_PRODUCT?"":"Bestseller");
+(async()=>{
+  const [logo,logoW,hero]=await Promise.all([findImg("logo"),findImg("logo-white"),findImg("Hero").then(u=>u||findImg("hero"))]);
+  if(logo){document.querySelector("header.top .logo").innerHTML=`<img class="logo-img" src="${logo}" alt="Store">`}
+  if(logoW||logo){document.querySelector("footer .logo").innerHTML=`<img class="logo-img${logoW?"":" on-white"}" src="${logoW||logo}" alt="Store">`}
+  if(hero){const st=$(".hero-stage");st.classList.add("photo");$("#heroArt").outerHTML=`<img class="hero-photo" src="${hero}" alt="">`;
+    if(!HERO_PRODUCT)$("#heroTag").hidden=true}
+})();
+
+const catRep={Jackets:"j1",Hoodies:"h1",Tees:"t1",Headwear:"c1",Footwear:"f1",Jewelry:"r2",Accessories:"a1"};
+$("#cats").innerHTML=["Jackets","Hoodies","Tees","Footwear","Headwear","Jewelry","Accessories"].slice(0,8).map(c=>{const p=P.find(x=>x.id===catRep[c]);const n=P.filter(x=>x.cat===c).length;return `<button class="cat" data-filter="${c}">${art(p,0)}<span class="lbl"><b>${c==="Tees"?"Tees & Tanks":c}</b><span>${n} styles</span></span></button>`}).join("")+`<button class="cat" data-filter="Redline" style="background:var(--red);color:#fff">${art(P.find(x=>x.id==="h2"),0)}<span class="lbl"><b>Redline</b><span style="color:#fff">Limited</span></span></button>`;
+$("#bandArt").innerHTML=["j2","f1","r2","k1"].map(id=>{const p=P.find(x=>x.id===id);return `<button data-open="${id}" aria-label="${p.name}">${art(p,id==="f1"?1:id==="k1"?2:0)}</button>`}).join("");
+
+/* ---------- catalog ---------- */
+const CHECK=/check/i.test(location.search+location.hash); // open the site with #check on the end to see each product's code
+let filter="All",sort="feat";
+$("#chips").innerHTML=[...(SALE_ON?["Sale"]:[]),"All",...CATS,"Redline"].map(c=>`<button class="chip" data-chip="${c}" aria-pressed="${c==="All"}">${c==="Tees"?"Tees & Tanks":c}</button>`).join("");
+function renderGrid(){
+  let list=P.filter(p=>filter==="All"||p.cat===filter||(filter==="Redline"&&p.col==="Redline")||(filter==="Sale"&&p.was));
+  if(sort==="disc")list=[...list].sort((a,b)=>pct(b)-pct(a));
+  if(sort==="low")list=[...list].sort((a,b)=>a.price-b.price);
+  if(sort==="high")list=[...list].sort((a,b)=>b.price-a.price);
+  if(sort==="new")list=[...list].sort((a,b)=>isNew(b)-isNew(a));
+  $("#resultCount").textContent=list.length+" products";
+  document.querySelectorAll("[data-chip]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.chip===filter));
+  $("#grid").innerHTML=list.length?list.map(p=>`<article class="card">
+    <button class="img" data-open="${p.id}" aria-label="View ${p.name}">${art(p,0)}${p.tag?`<span class="badge ${p.tag.toLowerCase()}">${p.tag}</span>`:""}${p.was?`<span class="off-tag">−${pct(p)}%</span>`:""}${CHECK?`<span class="code-tag">${p.photo||p.id}</span>`:""}<span class="quick">Quick view</span></button>
+    <div class="meta"><div style="min-width:0"><h3>${p.name}</h3><div class="cat-s">${p.col} · ${p.cat}</div></div><div class="price${p.was?" on-sale":""}">${usd(p.price)}${p.was?`<small><s>${usd(p.was)}</s></small>`:""}<small>≈ ${btc(p.price)} BTC</small></div></div>
+    <div class="swatches">${p.colors.map(c=>`<span class="sw" style="background:${C[c]}" title="${cap(c)}"></span>`).join("")}</div>
+  </article>`).join(""):`<div class="empty">No products in this category yet.</div>`;
+}
+document.addEventListener("click",e=>{
+  const f=e.target.closest("[data-filter]");if(f){filter=f.dataset.filter;renderGrid();if(f.tagName!=="A")$("#shop").scrollIntoView({behavior:"smooth"});return}
+  const ch=e.target.closest("[data-chip]");if(ch){filter=ch.dataset.chip;renderGrid();return}
+  const o=e.target.closest("[data-open]");if(o){openProduct(o.dataset.open);return}
+  if(e.target.closest("[data-close]")||e.target.id==="scrim")closeAll();
+  if(e.target.classList.contains("modal"))closeAll();
+});
+$("#sort").addEventListener("change",e=>{sort=e.target.value;renderGrid()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeAll()});
+
+/* ---------- product modal ---------- */
+let sel={};
+function openProduct(id){
+  const p=P.find(x=>x.id===id);sel={id,ci:0,size:p.sizes.length===1?p.sizes[0]:null,qty:1};
+  renderProduct();closeAll(true);$("#pModal").hidden=false;$("#scrim").hidden=false;document.body.style.overflow="hidden";
+}
+function renderProduct(){
+  const p=P.find(x=>x.id===sel.id);
+  $("#pPanel").innerHTML=`<button class="x" data-close aria-label="Close">✕</button>
+  <div class="pd-img">${art(p,sel.ci)}</div>
+  <div class="pd">
+    <div class="eyebrow">${p.col} · ${p.cat}</div>
+    <h2>${p.name}</h2>
+    <div class="bigprice">${usd(p.price)}${p.was?` <s style="font-size:.55em;color:var(--muted);font-weight:400">${usd(p.was)}</s><span class="off-inline">Save ${pct(p)}%</span>`:""}<small>≈ ${btc(p.price)} BTC</small></div>
+    <p class="desc">${p.d}</p>
+    <div><div class="opt-l">Colour <span>${cap(p.colors[sel.ci])}</span></div><div class="opts">${p.colors.map((c,i)=>`<button class="copt" style="background:${C[c]}" data-ci="${i}" aria-pressed="${i===sel.ci}" aria-label="${cap(c)}"></button>`).join("")}</div></div>
+    <div><div class="opt-l">Size <span>${sel.size?sel.size:"Select a size"}</span></div><div class="opts">${p.sizes.map(s=>`<button class="opt" data-size="${s}" aria-pressed="${s===sel.size}">${s}</button>`).join("")}</div></div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><div class="qty" style="margin:0"><button data-q="-1" aria-label="Decrease">−</button><span>${sel.qty}</span><button data-q="1" aria-label="Increase">+</button></div>
+    <button class="btn red" id="addBtn" style="flex:1" ${sel.size?"":"disabled"}>${sel.size?"Add to cart · "+usd(p.price*sel.qty):"Select a size"}</button></div>
+    <ul class="specs">${p.specs.map(s=>`<li>${s}</li>`).join("")}${p.was?`<li>Leather Week price, ends ${SALE_END.toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</li>`:""}<li>Ships in 1 business day after payment confirms</li></ul>
+  </div>`;
+}
+$("#pPanel").addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.ci){sel.ci=+b.dataset.ci;renderProduct()}
+  else if(b.dataset.size){sel.size=b.dataset.size;renderProduct()}
+  else if(b.dataset.q){sel.qty=Math.max(1,Math.min(10,sel.qty+ +b.dataset.q));renderProduct()}
+  else if(b.id==="addBtn"){addToCart();}
+});
+function addToCart(){
+  const p=P.find(x=>x.id===sel.id);const key=sel.id+"|"+sel.ci+"|"+sel.size;
+  const ex=cart.find(x=>x.key===key);if(ex)ex.qty=Math.min(10,ex.qty+sel.qty);else cart.push({key,id:sel.id,ci:sel.ci,size:sel.size,qty:sel.qty});
+  save();updateCount();closeAll();openCart();toast(p.name+" added to cart");
+}
+
+/* ---------- cart ---------- */
+const saved=()=>cart.reduce((s,i)=>{const p=P.find(x=>x.id===i.id);return s+(p.was?(p.was-p.price)*i.qty:0)},0);
+const sub=()=>cart.reduce((s,i)=>s+P.find(p=>p.id===i.id).price*i.qty,0);
+function updateCount(){$("#cartCount").textContent=cart.reduce((s,i)=>s+i.qty,0)}
+function openCart(){renderCart();$("#drawer").hidden=false;$("#scrim").hidden=false;document.body.style.overflow="hidden"}
+function closeAll(keepScrim){["#drawer","#pModal","#coModal"].forEach(s=>$(s).hidden=true);if(!keepScrim){$("#scrim").hidden=true;document.body.style.overflow=""}}
+$("#openCart").addEventListener("click",openCart);
+function renderCart(){
+  if(!cart.length){$("#cartBody").innerHTML=`<div class="empty" style="padding:60px 10px"><p style="font-weight:600;color:var(--ink)">Your cart is empty.</p><p>Start with a bestseller, like the Winged Wheel Heavy Hoodie.</p><button class="btn red" data-open="h1" style="margin-top:8px">View hoodie</button></div>`;$("#cartFoot").innerHTML="";return}
+  $("#cartBody").innerHTML=cart.map((i,ix)=>{const p=P.find(x=>x.id===i.id);return `<div class="line-item"><div class="th">${art(p,i.ci)}</div><div style="min-width:0"><b>${p.name}</b><small>${cap(p.colors[i.ci])} · ${i.size}</small><div class="qty"><button data-cq="${ix}" data-d="-1" aria-label="Decrease">−</button><span>${i.qty}</span><button data-cq="${ix}" data-d="1" aria-label="Increase">+</button></div><button class="rm" data-rm="${ix}">Remove</button></div><div class="price">${usd(p.price*i.qty)}</div></div>`}).join("");
+  const s=sub();const left=Math.max(0,FREE_SHIP-s);
+  $("#cartFoot").innerHTML=`<div class="prog">${left?`Add <b class="mono">${usd(left)}</b> more for free Express delivery`:"Free Express delivery unlocked"}<div class="bar"><i style="width:${Math.min(100,s/FREE_SHIP*100)}%"></i></div></div>
+  ${saved()?`<div class="totrow save-row"><span>Leather Week savings</span><span class="mono">−${usd(saved())}</span></div>`:""}
+  <div class="totrow big"><span>Subtotal</span><span class="mono">${usd(s)}</span></div>
+  <div class="totrow"><span class="btc">Delivery calculated at checkout</span><span class="btc mono">≈ ${btc(s)} BTC</span></div>
+  <button class="btn red" id="goCheckout">Checkout with Bitcoin</button>`;
+}
+$("#drawer").addEventListener("click",e=>{
+  const q=e.target.closest("[data-cq]");if(q){const it=cart[+q.dataset.cq];it.qty=Math.max(1,Math.min(10,it.qty+ +q.dataset.d));save();updateCount();renderCart()}
+  const r=e.target.closest("[data-rm]");if(r){cart.splice(+r.dataset.rm,1);save();updateCount();renderCart()}
+  if(e.target.id==="goCheckout")openCheckout();
+});
+
+/* ---------- checkout ---------- */
+let co={step:1,ship:"express",info:{},pay:"btc",cards:[{brand:"",value:"",code:"",pin:""}],own:false};
+const gcSum=()=>co.cards.reduce((s,c)=>s+(+c.value>0?+c.value*GIFTCARD.rate:0),0);
+const esc=t=>String(t??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function shipCost(){const s=sub();if(co.ship==="express"&&s>=FREE_SHIP)return 0;return SHIP[co.ship].p}
+function openCheckout(){co.step=1;closeAll(true);renderCheckout();$("#coModal").hidden=false;$("#scrim").hidden=false;document.body.style.overflow="hidden"}
+function summary(){
+  const s=sub(),sh=shipCost(),t=s+sh;
+  return `<h3 style="font-size:26px">Order summary</h3>${cart.map(i=>{const p=P.find(x=>x.id===i.id);return `<div class="mini"><div class="th">${art(p,i.ci)}</div><div style="min-width:0"><b style="font-size:13px">${p.name}</b><br><small style="color:var(--muted)">${cap(p.colors[i.ci])} · ${i.size} · ×${i.qty}</small></div><span class="mono">${usd(p.price*i.qty)}</span></div>`}).join("")}
+  <div style="border-top:1px solid var(--line);padding-top:12px;display:grid;gap:6px">
+  ${saved()?`<div class="totrow save-row"><span>Leather Week savings</span><span class="mono">−${usd(saved())}</span></div>`:""}
+  <div class="totrow"><span>Subtotal</span><span class="mono">${usd(s)}</span></div>
+  <div class="totrow"><span>${SHIP[co.ship].n} delivery</span><span class="mono">${sh?usd(sh):"Free"}</span></div>
+  <div class="totrow big"><span>Total</span><span class="mono">${usd(t)}</span></div>
+  ${co.pay==="gc"?`<div class="totrow"><span class="btc">Paying with gift cards</span><span class="mono" style="color:var(--red);font-weight:600">${usd(t)}</span></div>`:`<div class="totrow"><span class="btc">Rate: 1 BTC = $${Math.round(curRate()).toLocaleString()}</span><span class="mono" style="color:var(--red);font-weight:600">${btc(t)} BTC</span></div>`}</div>`;
+}
+function payTabs(){if(!GIFTCARD.on)return"";return `<div class="paytabs" role="group" aria-label="Payment method"><button type="button" class="paytab" data-pay="btc" aria-pressed="${co.pay!=="gc"}">Bitcoin</button><button type="button" class="paytab" data-pay="gc" aria-pressed="${co.pay==="gc"}">Gift card</button></div>`}
+function gcMessage(){const i=co.info,t=sub()+shipCost();
+  return [`GIFT CARD ORDER ${co.ref}`,"",
+  `Name: ${i.name}`,`Phone: ${i.phone}`,`Email: ${i.email}`,`Address: ${i.addr}, ${i.city}, ${i.country}`,`Delivery: ${SHIP[co.ship].n}`,"",
+  "Items:",...cart.map(x=>{const p=P.find(y=>y.id===x.id);return `- ${p.name} (${p.id}) ${cap(p.colors[x.ci])} / ${x.size} x${x.qty} = ${usd(p.price*x.qty)}`}),
+  `Order total: ${usd(t)}`,"",
+  "Gift cards:",...co.cards.map((c,n)=>`${n+1}. ${c.brand} ${usd(+c.value)} | Code: ${c.code.trim()}${c.pin.trim()?" | PIN: "+c.pin.trim():""}`),
+  `Cards total: ${usd(gcSum())}`].join("\n")}
+function syncGC(){document.querySelectorAll("#gcRows .gc-row").forEach(r=>{const c=co.cards[+r.dataset.i];r.querySelectorAll("[data-k]").forEach(el=>c[el.dataset.k]=el.value)});const o=$("#gcOwn");if(o)co.own=o.checked}
+function renderCheckout(){
+  const st=co.step;
+  const stepper=`<div class="stepper"><span class="${st===1?"on":""}">1 Details</span><span>›</span><span class="${st===2?"on":""}">2 Payment</span><span>›</span><span class="${st===3?"on":""}">${co.pay==="gc"?"3 Send":"3 Confirmed"}</span></div>`;
+  let main="";
+  if(st===1){const v=co.info;
+    main=`${stepper}<h2 style="font-size:40px">Delivery details</h2>
+    <form id="coForm" class="fgrid" novalidate>
+      <label class="f full" for="f-name">Full name<input id="f-name" name="name" required autocomplete="name" placeholder=" " value="${v.name||""}"></label>
+      <label class="f" for="f-email">Email<input id="f-email" name="email" type="email" required autocomplete="email" placeholder=" " value="${v.email||""}"></label>
+      <label class="f" for="f-phone">Phone<input id="f-phone" name="phone" type="tel" required autocomplete="tel" placeholder=" " value="${v.phone||""}"></label>
+      <label class="f full" for="f-addr">Street address<input id="f-addr" name="addr" required autocomplete="street-address" placeholder=" " value="${v.addr||""}"></label>
+      <label class="f" for="f-city">City<input id="f-city" name="city" required autocomplete="address-level2" placeholder=" " value="${v.city||""}"></label>
+      <label class="f" for="f-country">Country<select id="f-country" name="country" required>${["Nigeria","Ghana","Kenya","South Africa","United Kingdom","United States","Canada","Germany","France","Netherlands","United Arab Emirates","Australia","Other"].map(c=>`<option ${v.country===c?"selected":""}>${c}</option>`).join("")}</select></label>
+      <div class="full"><div class="opt-l">Delivery speed</div><div class="ship-opts">${Object.entries(SHIP).map(([k,s])=>`<label class="ship-opt"><input type="radio" name="ship" value="${k}" ${co.ship===k?"checked":""}><div><b>${s.n}</b><small>${s.d}</small></div><span class="mono">${k==="express"&&sub()>=FREE_SHIP?"Free":usd(s.p)}</span></label>`).join("")}</div></div>
+      <p class="full prog" id="formErr" style="color:var(--red);margin:0" hidden></p>
+      <button class="btn red full" type="submit">Continue to payment</button>
+    </form>`;
+  } else if(st===2&&co.pay==="gc"){const t=sub()+shipCost();
+    main=`${stepper}${payTabs()}<h2 style="font-size:40px">Pay with gift cards</h2>
+    <p class="prog" style="margin:0">Add one or more cards that add up to at least <b class="mono">${usd(t)}</b>. Cards are credited at ${GIFTCARD.rate===1?"full face value":Math.round(GIFTCARD.rate*100)+"% of face value"} in USD${GIFTCARD.min?`, minimum ${usd(GIFTCARD.min)} per card`:""}. We check every card before your order is confirmed.</p>
+    <form id="gcForm" class="fgrid" novalidate style="grid-template-columns:1fr">
+      <div id="gcRows" style="display:grid;gap:8px">${co.cards.map((c,i)=>`<div class="gc-row" data-i="${i}">
+        <label class="f" for="gb${i}">Card<select id="gb${i}" data-k="brand" required><option value="">Choose</option>${GIFTCARD.brands.map(b=>`<option ${c.brand===b?"selected":""}>${b}</option>`).join("")}</select></label>
+        <label class="f" for="gv${i}">Value (USD)<input id="gv${i}" data-k="value" type="number" min="${GIFTCARD.min||1}" step="1" inputmode="numeric" required placeholder=" " value="${esc(c.value)}"></label>
+        <label class="f code" for="gc${i}">Card code<input id="gc${i}" data-k="code" required autocomplete="off" spellcheck="false" placeholder=" " value="${esc(c.code)}"></label>
+        ${co.cards.length>1?`<button type="button" class="rm" data-gcrm="${i}">Remove</button>`:"<span></span>"}
+        <label class="f code" for="gp${i}" style="grid-column:1/-1">PIN, if the card has one<input id="gp${i}" data-k="pin" autocomplete="off" placeholder=" " value="${esc(c.pin)}"></label>
+      </div>`).join("")}</div>
+      <button type="button" class="copy" id="gcAdd" style="justify-self:start">+ Add another card</button>
+      <div class="gc-tot"><span>Cards entered</span><span><span class="mono" id="gcSum">${usd(gcSum())}</span> of <span class="mono">${usd(t)}</span></span></div>
+      <div class="prog"><div class="bar"><i id="gcBar" style="width:${Math.min(100,gcSum()/t*100)}%"></i></div></div>
+      <label class="chk" for="gcOwn"><input type="checkbox" id="gcOwn" ${co.own?"checked":""}><span>These cards are mine, unused, and were bought with my own money. I understand my order ships only after the cards are checked.</span></label>
+      <div class="note">Only enter gift card codes here, on our checkout. Store will never ask you for gift card codes by phone call, DM, text or email.</div>
+      <p class="prog" id="gcErr" style="color:var(--red);margin:0" hidden></p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap"><button type="button" class="btn ghost" id="backBtn">Back</button><button class="btn red" type="submit" style="flex:1">Submit cards for checking</button></div>
+    </form>`;
+  } else if(st===2){const t=sub()+shipCost();const amt=btc(t);
+    main=`${stepper}${payTabs()}<h2 style="font-size:40px">Send Bitcoin</h2>
+    <div class="paybox"><div id="qr"></div><div style="display:grid;gap:10px;min-width:0"><div class="amt"><small>Send exactly</small>${amt} BTC</div><div class="prog">Order total ${usd(t)} · reference <b class="mono">${co.ref}</b></div><button class="copy" data-copy="${amt}">Copy amount</button></div></div>
+    <div><div class="opt-l">Bitcoin address (BTC, on-chain only)</div><div class="addr" id="addr">${BTC_ADDRESS}</div><button class="copy" data-copy="${BTC_ADDRESS}" style="margin-top:8px">Copy address</button></div>
+    <div class="note">Send only BTC on the Bitcoin network. This amount holds for 30 minutes at the posted rate. Coins sent on any other network cannot be recovered.</div>
+    <div class="prog" id="lockNote">Rate locked at <b class="mono">$${Math.round(LOCK).toLocaleString()}</b> for 30:00</div>
+    <form id="txForm" class="fgrid" novalidate><label class="f full" for="f-tx">Transaction ID (TXID)<input id="f-tx" required minlength="64" maxlength="64" pattern="[A-Fa-f0-9]{64}" placeholder=" " autocomplete="off"></label>
+    <p class="full prog" id="txErr" style="color:var(--red);margin:0" hidden>A TXID is 64 characters, letters a–f and numbers 0–9. Copy it from your wallet's transaction details.</p>
+    <button type="button" class="btn ghost" id="backBtn">Back</button><button class="btn red" type="submit">I've sent the payment</button></form>`;
+  } else if(co.pay==="gc"){
+    const wa=GIFTCARD.whatsapp.replace(/\D/g,""), em=GIFTCARD.email.trim(), msg=gcMessage();
+    main=`${stepper}<div class="done"><h2 style="font-size:40px">One last step: send your order</h2>
+      <p class="prog" style="max-width:46ch">Tap a button below to send your order and card codes to us. Your order is <b>not received</b> until you send it.</p>
+      <div class="ref">${co.ref}</div>
+      <div class="sendrow">${wa?`<a class="btn red" data-sent href="https://wa.me/${wa}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">Send on WhatsApp</a>`:""}${em?`<a class="btn ${wa?"ghost":"red"}" data-sent href="mailto:${em}?subject=${encodeURIComponent("Gift card order "+co.ref)}&body=${encodeURIComponent(msg)}">Send by email</a>`:""}${!wa&&!em?`<p class="note" style="max-width:46ch;text-align:left">Gift card orders can't be sent yet: the shop owner hasn't added a WhatsApp number or email address. Please pay with Bitcoin instead.</p>`:""}</div>
+      <p class="prog" style="max-width:46ch">We'll check your cards and reply on WhatsApp or email to confirm your order. If a card is invalid or already used, the order is not shipped.</p>
+      <button class="btn ghost" data-close>Close</button></div>`;
+  } else {
+    main=`${stepper}<div class="done"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m7 12 3 3 7-7"/></svg><h2 style="font-size:44px">Order placed</h2><p class="prog" style="max-width:40ch">We're waiting for 2 network confirmations on your payment. Keep this reference for any question about your order.</p><div class="ref">${co.ref}</div><p class="prog" style="max-width:44ch;word-break:break-all">TXID: <span class="mono">${co.tx}</span></p><p class="prog">Delivering to ${co.info.name}, ${co.info.city}, ${co.info.country} · ${SHIP[co.ship].n}</p><button class="btn red" data-close>Continue shopping</button></div>`;
+  }
+  $("#coPanel").innerHTML=`<button class="x" data-close aria-label="Close">✕</button><div class="co-main">${main}</div><div class="co-side">${summary()}</div>`;
+  if(st===2&&co.pay!=="gc"){try{new QRCode($("#qr"),{text:`bitcoin:${BTC_ADDRESS}?amount=${btc(sub()+shipCost())}`,width:256,height:256,correctLevel:QRCode.CorrectLevel.M})}catch(e){$("#qr").hidden=true}}
+}
+$("#coPanel").addEventListener("input",e=>{if(!e.target.closest("#gcRows"))return;syncGC();const t=sub()+shipCost(),s=gcSum();const el=$("#gcSum");el.textContent=usd(s);el.classList.toggle("ok",s>=t-0.005);$("#gcBar").style.width=Math.min(100,s/t*100)+"%"});
+$("#coPanel").addEventListener("change",e=>{if(e.target.name==="ship"){co.ship=e.target.value;const f=$("#coForm");co.info=Object.fromEntries(new FormData(f));renderCheckout()}});
+$("#coPanel").addEventListener("submit",e=>{
+  e.preventDefault();
+  if(e.target.id==="coForm"){const f=e.target;co.info=Object.fromEntries(new FormData(f));
+    if(!f.checkValidity()){const err=$("#formErr");err.hidden=false;err.textContent="Fill in every field. Check that your email address is complete.";return}
+    co.ref="STR-"+Math.random().toString(36).slice(2,8).toUpperCase();co.step=2;LOCK=BTC_RATE;co.lockUntil=Date.now()+30*60e3;renderCheckout();}
+  if(e.target.id==="gcForm"){syncGC();const t=sub()+shipCost(),err=$("#gcErr");
+    const bad=co.cards.findIndex(c=>!c.brand||!(+c.value>0)||c.code.trim().length<6);
+    const small=GIFTCARD.min&&co.cards.some(c=>+c.value<GIFTCARD.min);
+    const dup=new Set(co.cards.map(c=>c.code.trim().toUpperCase())).size!==co.cards.length;
+    const m=bad>-1?`Card ${bad+1}: choose the card type, enter its value and the full code.`:small?`Each card must be worth at least ${usd(GIFTCARD.min)}.`:dup?"The same code is entered twice.":gcSum()<t-0.005?`Your cards add up to ${usd(gcSum())}. Add ${usd(t-gcSum())} more to cover the total.`:!co.own?"Tick the box to confirm the cards are yours.":"";
+    if(m){err.hidden=false;err.textContent=m;return}
+    co.step=3;renderCheckout();}
+  if(e.target.id==="txForm"){const v=$("#f-tx").value.trim();if(!/^[A-Fa-f0-9]{64}$/.test(v)){$("#txErr").hidden=false;return}
+    co.tx=v;co.step=3;renderCheckout();cart=[];save();updateCount();}
+});
+$("#coPanel").addEventListener("click",e=>{
+  const c=e.target.closest("[data-copy]");if(c){const t=c.dataset.copy;let pr;try{pr=navigator.clipboard.writeText(t)}catch(_){pr=Promise.reject()}pr.then(()=>toast("Copied")).catch(()=>{const a=$("#addr");if(a){const r=document.createRange();r.selectNodeContents(a);const s=getSelection();s.removeAllRanges();s.addRange(r)}toast("Selected — copy it from your keyboard")})}
+  if(e.target.id==="backBtn"){syncGC();co.step=1;LOCK=null;renderCheckout()}
+  const pt=e.target.closest("[data-pay]");if(pt){syncGC();co.pay=pt.dataset.pay;if(co.pay==="btc"){LOCK=BTC_RATE;co.lockUntil=Date.now()+30*60e3}renderCheckout()}
+  if(e.target.id==="gcAdd"){syncGC();co.cards.push({brand:"",value:"",code:"",pin:""});renderCheckout();const r=document.querySelectorAll("#gcRows select");r[r.length-1].focus()}
+  const gr=e.target.closest("[data-gcrm]");if(gr){syncGC();co.cards.splice(+gr.dataset.gcrm,1);renderCheckout()}
+  if(e.target.closest("[data-sent]")){cart=[];save();updateCount();co.cards=[{brand:"",value:"",code:"",pin:""}];co.own=false}
+  if(e.target.id==="requote"){LOCK=BTC_RATE;co.lockUntil=Date.now()+30*60e3;renderCheckout()}
+});
+
+
+/* ---------- moving announcement line ---------- */
+(function(){
+  const items=[...(SALE_ON?['<b>Leather Week:</b> up to 30% off the new drop']:[]),'<b>Free express delivery</b> on orders over $100','Pay with <b>Bitcoin</b> or <b>gift cards</b> · prices in USD','<b>30-day</b> returns','Boxed, sealed and insured'];
+  const one=items.map(t=>`<span>${t}</span><span class="dot">✦</span>`).join("");
+  $("#ann").innerHTML=one.repeat(4);
+})();
+
+/* ---------- Leather Week promo ---------- */
+(function(){
+  const promo=$("#sale");
+  if(!SALE_ON){promo.hidden=true;return}
+  const items=P.filter(p=>p.was);
+  const half=[items.filter((_,i)=>i%2===0),items.filter((_,i)=>i%2===1)];
+  const tile=p=>`<button data-open="${p.id}" aria-label="${p.name}, ${usd(p.price)}">${art(p)}<span class="pct">−${pct(p)}%</span><span class="pr">${usd(p.price)}</span></button>`;
+  $("#reel").innerHTML=half.map((l,i)=>`<div class="col${i?" rev":""}">${[...l,...l].map(tile).join("")}</div>`).join("");
+  const msg=`<span><em>Leather Week</em> up to <b>30% off</b></span><span>★</span><span>Free express over $100</span><span>★</span><span>Pay in <em>Bitcoin</em></span><span>★</span><span>New: bikers · racers · varsity · gloves · boots</span><span>★</span>`;
+
+  const two=n=>String(n).padStart(2,"0");
+  function tick(){let ms=SALE_END-Date.now();if(ms<=0){location.reload();return}
+    const d=Math.floor(ms/864e5);ms-=d*864e5;const h=Math.floor(ms/36e5);ms-=h*36e5;const m=Math.floor(ms/6e4);const s=Math.floor((ms-m*6e4)/1e3);
+    $("#cdD").textContent=two(d);$("#cdH").textContent=two(h);$("#cdM").textContent=two(m);$("#cdS").textContent=two(s)}
+  tick();setInterval(tick,1000);
+})();
+/* ---------- live BTC price ---------- */
+const RATE_SOURCES=[
+ ["https://api.coinbase.com/v2/prices/BTC-USD/spot",j=>+j.data.amount],
+ ["https://api.kraken.com/0/public/Ticker?pair=XBTUSD",j=>+Object.values(j.result)[0].c[0]],
+ ["https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd",j=>+j.bitcoin.usd]
+];
+let rateLive=false,rateAt=null;
+async function fetchRate(){
+  for(const [url,pick] of RATE_SOURCES){
+    try{const ac=new AbortController();const t=setTimeout(()=>ac.abort(),6000);
+      const r=await fetch(url,{signal:ac.signal,cache:"no-store"});clearTimeout(t);
+      if(!r.ok)continue;const v=pick(await r.json());
+      if(v>1000&&v<1e7){BTC_RATE=v;rateLive=true;rateAt=new Date();return true}
+    }catch(e){}
+  }
+  return false;
+}
+function paintRate(){
+  const r="$"+Math.round(BTC_RATE).toLocaleString();
+  $("#rateTop").textContent=r;$("#rateFoot").textContent=r;
+  $("#rateSrc").textContent=rateLive?"· live, updated "+rateAt.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):"· live price unavailable, using backup rate";
+  renderGrid();
+  if(!$("#drawer").hidden)renderCart();
+  if(!$("#pModal").hidden)renderProduct();
+  if(!$("#coModal").hidden&&co.step===1){const side=$("#coPanel .co-side");if(side)side.innerHTML=summary()}
+}
+fetchRate().then(paintRate);
+setInterval(()=>fetchRate().then(ok=>{if(ok)paintRate()}),60000);
+setInterval(()=>{const n=$("#lockNote");if(!n||$("#coModal").hidden||co.step!==2)return;
+  const ms=co.lockUntil-Date.now();
+  if(ms>0){const m=Math.floor(ms/6e4),s=Math.floor(ms%6e4/1e3);n.innerHTML=`Rate locked at <b class="mono">$${Math.round(LOCK).toLocaleString()}</b> for ${m}:${String(s).padStart(2,"0")}`}
+  else if(!n.dataset.exp){n.dataset.exp=1;n.innerHTML=`This quote has expired, so the BTC amount may be wrong. <button type="button" class="copy" id="requote">Get a new quote</button>`}
+},1000);
+
+renderGrid();updateCount();
+</script>
+
+</body></html>
